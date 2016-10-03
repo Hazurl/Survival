@@ -97,7 +97,7 @@ public class Character : MonoBehaviour {
 
                 List<Item> drop = new List<Item>();
 
-                if (target.Damage(CHOP_DAMAGE_PER_SECOND, drop)) Debug.Log("The three is dead !!!");
+                if (target.Damage(CHOP_DAMAGE_PER_SECOND, out drop)) Debug.Log("The three is dead !!!");
 
                 inventory.AddItem(drop);
             }

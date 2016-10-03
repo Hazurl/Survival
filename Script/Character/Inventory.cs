@@ -4,13 +4,13 @@ using System.Collections.Generic;
 
 public class Inventory
 {
-    private Dictionary<int, int> listItem;
+    private Dictionary<Item.ItemID, int> listItem;
 
     const int MAX_STACKABLE_ITEMS = 128;
 
 	public Inventory()
 	{
-        listItem = new Dictionary<int, int>();
+        listItem = new Dictionary<Item.ItemID, int>();
 	}
 
     public void display ()
@@ -22,8 +22,8 @@ public class Inventory
     {
         foreach (Item item in items)
         {
-            if (listItem.ContainsKey(item.ID) == false) listItem[item.ID] = item.amount;
-            else listItem[item.ID] += item.amount;
+            if (listItem.ContainsKey(item.ID) == false) listItem[item.ID] = item.Amount;
+            else listItem[item.ID] += item.Amount;
             if (listItem[item.ID] > MAX_STACKABLE_ITEMS)
                 listItem[item.ID] = MAX_STACKABLE_ITEMS;
         }
@@ -42,7 +42,7 @@ public class Inventory
     {
         foreach (Item item in recipe)
         {
-            listItem[item.ID] -= item.amount;
+            listItem[item.ID] -= item.Amount;
             if (listItem[item.ID] < 0) throw new Exception("Not Enought Item");
         }
     }

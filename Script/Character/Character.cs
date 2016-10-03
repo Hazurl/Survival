@@ -1,23 +1,31 @@
 ﻿using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 
 public class Character : MonoBehaviour {
 
+    //The camera following this character
     public Camera cam;
 
     //FIXME : The damage on a three can't be just an integer
     public const int CHOP_DAMAGE_PER_SECOND = 20;
     public const float CHOP_DISTANCE = 20f;
 
-
+    //Transform
     private Transform tf;
     private Transform camTf;
     private Vector3 offset;
 
+    //Inventory
+    private Inventory inventory;
+
     void Start () {
+        //Initialize Tansform
         tf = GetComponent<Transform>();
         camTf = cam.GetComponent<Transform>();
         offset = camTf.position - tf.position;
+
+        //Initialize inventory, later we should initialize from a save
+        inventory = new Inventory();
     }
 
     void Update () {
@@ -30,6 +38,12 @@ public class Character : MonoBehaviour {
 
         //Choping
         Chop();
+
+        //If 'E' KW is press, display the inventory
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            inventory.display();
+        }
     }
 
     void InputMovement ()
@@ -81,7 +95,11 @@ public class Character : MonoBehaviour {
 
                 if (target == null || target.isDead()) return;
 
-                if (target.Damage(CHOP_DAMAGE_PER_SECOND)) Debug.Log("The three is dead !!!");
+                List<Item> drop = new List<Item>();
+
+                if (target.Damage(CHOP_DAMAGE_PER_SECOND, drop)) Debug.Log("The three is dead !!!");
+
+                inventory.AddItem(drop);
             }
         }
     }

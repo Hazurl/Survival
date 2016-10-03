@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 using UnityEngine.UI;
 
 public class IChopable : MonoBehaviour {
@@ -25,7 +25,7 @@ public class IChopable : MonoBehaviour {
     }
 
     //Currently, this return just a boolean, maybe return a list of item ?
-    public bool Damage (int dam)
+    public bool Damage (int dam, out List<Item> items)
     {
         if (timeFromLastHit <= 0)
         {
@@ -33,7 +33,11 @@ public class IChopable : MonoBehaviour {
             currentLife -= dam;
         }
 
-        return currentLife <= 0;
+        if (currentLife > 0) return false;
+
+        //Drop 1 to 3 Wood (maybe it should be a paremeter ?)
+        items.Add(new Item(Item.ItemID.WOOD, Random.Range(1, 3)));
+        return true;
     }
 
     public bool isDead ()

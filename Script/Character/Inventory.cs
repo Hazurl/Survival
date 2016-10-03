@@ -37,4 +37,13 @@ public class Inventory
         }
         return true;
     }
+
+    public void RemoveRecipe (List<Item> recipe)
+    {
+        foreach (Item item in recipe)
+        {
+            listItem[item.ID] -= item.amount;
+            if (listItem[item.ID] < 0) throw new Exception("Not Enought Item");
+        }
+    }
 }

@@ -10,10 +10,10 @@
 
 ***Technologie>*** En recherchant de nouvel technologie le joueur pourra développer des nouveaux crafts. Les technologies pourront être débloqués à partir du moment où le personnage avancera dans le scénario, les différentes technologies seront débloquées.
 
-###**Le scénario :**
->Le scénario paraît flou au début du jeu. Il apparaît en se réveillant au milieu de nulle part. Au fur et à mesure que le personnage avance et découvre des structures/technologies, il apprend qu’il est le seul sur Terre. Les hommes ont tellement dégradé la Terre qu’une force supérieure les a éradiqués sous la colère, la Terre fut alors vidée de toutes traces des Hommes. Le personnage n’est pas un survivant de cette catastrophe mais plutôt une seconde chance de l’humanité. En effet, ce personnage doit prouver la valeur de l’Homme en survivants sans reproduire les mêmes erreurs que ces prédécesseurs. Lors de sa mort, un nouveau personnage prend le relai… Les bâtiments/structures que le joueur découvre sont enfaites les vestiges du passé, les « bulles » dans lesquels elles se trouvent, sont des « souvenirs » de l’ancien temps.
+##**Le scénario :**
+>Le scénario paraît flou au début du jeu. Le joueur apparaît en se réveillant au milieu de nulle part. Au fur et à mesure que le personnage avance et découvre des structures/technologies, il apprend qu’il est le seul sur Terre. Les hommes ont tellement dégradé la Terre qu’une force supérieure les a éradiqués sous la colère, la Terre fut alors vidée de toutes traces des Hommes. Le personnage n’est pas un survivant de cette catastrophe mais plutôt une seconde chance de l’humanité. En effet, ce personnage doit prouver la valeur de l’Homme en survivants sans reproduire les mêmes erreurs que ces prédécesseurs. Lors de sa mort, un nouveau personnage prend le relai… Les bâtiments/structures que le joueur découvre sont enfaites les vestiges du passé, les « bulles » dans lesquels elles se trouvent, sont des « souvenirs » de l’ancien temps.
 
-###**Précision :** 
+##**Précision :** 
 ***Le personnage>*** Il est caractérisé par des besoins vitaux.
 *-	La faim :* Pour se nourrir le personnage peut chasser, pêcher ou récolter des fruits.
 *-	La soif :* Suffit de boire de l’eau, l’eau de mer doit être dessalé, l’eau de pluie peut être récoltés avec des récipients lorsqu’il pleut.

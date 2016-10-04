@@ -30,6 +30,6 @@
 
 ***Crafting>*** Pour fabriquer des objets, le joueur à besoins de différents ingrédients, toutes les technologies ne sont pas accessibles dès le début du jeu, les technologies, les plans permettent d’en débloquer de nouveaux. 
 
-***Structures>*** Si le personnage n’est pas dans un état critique (pas fait trop de connerie quoi), les structures pourront apparaître, celle-ci sont entourés par une « bulle de souvenir » comme expliqués dans le script. Le joueur peut trouver à l’intérieur des reliques, des plans ou d’autre items communs. Les drops dépendent du comportement adopté par le joueur.
+***Structures>*** Si le personnage n’est pas dans un état critique (pas fait trop de connerie quoi), les structures pourront apparaître,  celle-ci sont entourés par une « bulle de souvenir » comme expliqués dans le script. Le joueur peut trouver à l’intérieur des reliques, des plans ou d’autre items communs. Les drops ainsi que le taux de spawn dépendent du comportement adopté par le joueur.
 
 ***Difficultés>*** Le joueur peut modifier la difficulté au lancement de la partie, celle-ci influence les dons de début de jeu pour les débutants, le facteur de « colère » de la puissance céleste, la vitesse des besoins du personnage, les taux de spawn des structures…

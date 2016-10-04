@@ -2,17 +2,17 @@
 
 public class Item
 {
-	public Item(int ID, int amount)
-	{
+    public Item(ItemID ID, int amount)
+    {
         this.ID = ID;
         this.Amount = amount;
-	}
+    }
 
     //The Item is defined by an ID and an amount
-    private int _ID;
+    private ItemID _ID;
     private int _amount;
 
-    public int ID
+    public ItemID ID
     {
         get
         {
@@ -50,7 +50,7 @@ public class Item
         return Amount -= Math.Min(amount, Amount);
     }
 
-    public static enum ItemID
+    public enum ItemID
     {
         WOOD,
         STONE

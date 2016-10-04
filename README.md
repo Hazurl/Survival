@@ -20,7 +20,9 @@
 *-	La fatigue :* Le personnage doit se reposer, la création de lit, permet de se reposer plus efficacement, dormir fait avancer le temps (la durée peut varier selon la fatigue).
 *-	Sa santé :* Pas de maladies de prévus. Lorsque le personnage prend des dégâts (Animaux, feu…), sa santé diminue.
 
-***Game Over>*** La partie est perdu si le personnage meurt. Cependant, il n’est pas le personnage n’est pas le seul à devoir réparer les erreurs de l’humanité, ainsi un nouveau personnage apparaît donc. Son avancés ne sera donc pas perdu, afin de ne pas être frustrés… La difficulté choisie par le joueur joue sur e facteur entre autres.
+***Game Over>*** A la mort du personnage, si la difficultés n'est pas trop élevée, un nouveau personnage apparaîtra et le joueur pourra donc continuer à jouer sur la même partie. La partie est définitivement perdu si le comportement du joueur est trop mauvais.
+
+***But du jeu>*** Le joueur doit progresser dans les technologies afin de survivre le plus longtemps possible.
 
 ***Inventaire>*** Le personnage possède des items, ils sont de différentes natures, les ressources primaires (i.e. bois, pierre…), les outils (arc, hache…), les objets craftés (lit, murs, machines …) ainsi que des reliques trouvées dans les temples/ruines …
 

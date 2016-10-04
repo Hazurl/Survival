@@ -1,9 +1,13 @@
 
 #Le cahier des charges : 
 ***Survivre >*** Notre Personnage à une barre de santé, de fatigue, de faim et de soif, il faut donc se nourrir, boire, se reposer pour ne pas mourir. Un manque dans l’un de ces besoins entraîne des dégradations, pouvant être de différentes nature comme la vitesse, la contrôlabilité du personnage. 
-***Explorer >*** Le personnage évoluera dans un monde infini et vierge. Cependant, certaines structures apparaîtront dans le monde dans des « bulles ». Des évènements apparaîtrons comme des chutes de météorites, des phénomènes météorologiques suivant les agissements du personnage…11
+
+***Explorer >*** Le personnage évoluera dans un monde infini et vierge. Cependant, certaines structures apparaîtront dans le monde dans des « bulles ». Des évènements apparaîtrons comme des chutes de météorites, des phénomènes météorologiques suivant les agissements du personnage…
+
 ***Collecter>*** Le personnage peut collecter des ressources primaires comme des cailloux, des branches… Puis à l’aide d’outil, il peut couper du bois, miner… 
+
 Crafter> La collecte de ressources primaires permet en les fusionnant de créer des objets améliorant la survie du personnage. 
+
 ***Technologie>*** En recherchant de nouvel technologie le joueur pourra développer des nouveaux crafts. Les technologies pourront être débloqués à partir du moment où le personnage avancera dans le scénario, les différentes technologies seront débloquées.
 
 ###**Le scénario :**
@@ -17,9 +21,15 @@ Le scénario paraît flou au début du jeu. Il apparaît en se réveillant au mi
 *-	Sa santé :* Pas de maladies de prévus. Lorsque le personnage prend des dégâts (Animaux, feu…), sa santé diminue.
 
 ***Game Over>*** La partie est perdu si le personnage meurt. Cependant, il n’est pas le personnage n’est pas le seul à devoir réparer les erreurs de l’humanité, ainsi un nouveau personnage apparaît donc. Son avancés ne sera donc pas perdu, afin de ne pas être frustrés… La difficulté choisie par le joueur joue sur e facteur entre autres.
+
 ***Inventaire>*** Le personnage possède des items, ils sont de différentes natures, les ressources primaires (i.e. bois, pierre…), les outils (arc, hache…), les objets craftés (lit, murs, machines …) ainsi que des reliques trouvées dans les temples/ruines …
+
 ***Recherche de technologie>*** Les reliques permettent de rechercher des technologies, celle-ci sont construites autour d’un arbre, séparer en plusieurs catégories : la survie (améliorer sa survie, réduire la vitesse de la faim, soif fatigue…), la collecte (les éléments sont plus rapidement collectables, plus de drops…), l’exploration (le personnage est plus rapide, les reliques apparaissent plus souvent…) et le crafting (Les objets demande moins de ressources, moins de temps…).
+
 ***Evènements>*** Selon les comportements du joueur, les évènements seront plus ou moins bénéfique voire entraînerais des catastrophes. Un exemple, le joueur se concentre sur les plantations plutôt que la chasse seulement, les évènements auront tendances à être bénéfiques, mais la culture est plus compliquée que la chasse ou le pêche. Dans ce cas le spawn des structures sera baissé… Les paramètres d’apparition d’évènements ne sont pas tout blanc ou tout noir, ils s’adaptent au joueur… / ! \ Il ne faut pas non plus « bloqués » le joueur dans un chemin, afin de mettre plus de diversité dans la stratégie.
+
 ***Crafting>*** Pour fabriquer des objets, le joueur à besoins de différents ingrédients, toutes les technologies ne sont pas accessibles dès le début du jeu, les technologies, les plans permettent d’en débloquer de nouveaux. 
+
 ***Structures>*** Si le personnage n’est pas dans un état critique (pas fait trop de connerie quoi), les structures pourront apparaître, celle-ci sont entourés par une « bulle de souvenir » comme expliqués dans le script. Le joueur peut trouver à l’intérieur des reliques, des plans ou d’autre items communs. Les drops dépendent du comportement adopté par le joueur.
+
 ***Difficultés>*** Le joueur peut modifier la difficulté au lancement de la partie, celle-ci influence les dons de début de jeu pour les débutants, le facteur de « colère » de la puissance céleste, la vitesse des besoins du personnage, les taux de spawn des structures…

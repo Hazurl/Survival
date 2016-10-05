@@ -39,3 +39,6 @@
 ***Difficultés>*** Le joueur peut modifier la difficulté au lancement de la partie, celle-ci influence les dons de début de jeu pour les débutants, le facteur de « colère » de la puissance céleste, la vitesse des besoins du personnage, les taux de spawn des structures…
 
 ***Les reliques>*** Elles sont droppables soi dans des structures soit par un évènement positif, elles permettent d'acquérir de nouvelles techologies. Ce ne sont pas des ingrédients pour crafter un quelconque objet.
+
+##**Avancé typique :** ####*On notera que ceci est une ébauche, ce n'est pas le projet final, mais plutot l'image attendu*
+>Le personnage spawn au milieu de nulle part après une intro "mystérieuse". Il commence à récolter des branches tombé par terre et des cailloux. Il se met alors à réfléchir pour construire son premier outil : La lance. Cela lui permet de chasser pour se nourrir. Il arrive ensuite à construire des vetements avec de la peau de bête *(Instaurer un système de chaleur ?)*. Les os peuvent permettre de contruire des manches à outils plus solides. La hache fait son apparition. En trouvant des lianes, le joueur peut creer un archet pour faire du feu. En trouvant du silex, le feu est aussi accessible. Celui-ci permet *(de se réchauffer ?)* de faire fuire les bêtes et est une source de luminosité. La viande peut-être cuite dessus.

@@ -4,13 +4,18 @@ using System.Collections.Generic;
 
 public class Inventory
 {
-    private Dictionary<Item.ItemID, int> listItem;
+    private Item[] inventory;
 
-    const int MAX_STACKABLE_ITEMS = 128;
-
-	public Inventory()
+	public Inventory(uint capacity, Item[] items = null)
 	{
-        listItem = new Dictionary<Item.ItemID, int>();
+        inventory = new Item[capacity];
+        if (items != null)
+        {
+            foreach (var item in items)
+            {
+                if(!TryAddItem(item)) break;
+            }
+        }
 	}
 
     public void display ()
@@ -18,32 +23,33 @@ public class Inventory
         //At this point, we want to display the inventory into the unity windows
     }
 
-    public void AddItem (List<Item> items)
+    public void AddItems (Item[] items)
     {
         foreach (Item item in items)
         {
-            if (listItem.ContainsKey(item.ID) == false) listItem[item.ID] = item.Amount;
-            else listItem[item.ID] += item.Amount;
-            if (listItem[item.ID] > MAX_STACKABLE_ITEMS)
-                listItem[item.ID] = MAX_STACKABLE_ITEMS;
+            if (!TryAddItem(item)) break;
         }
     }
 
-    public bool haveCompleteRecipe(List<Item> recipeList)
+    public bool TryAddItem(Item item)
+    {
+        return false;
+    }
+
+    public bool haveCompleteRecipe(Item[] recipeList)
     {
         foreach (Item item in recipeList)
         {
-            if (!listItem.ContainsKey(item.ID) || listItem[item.ID] < item.Amount) return false;
+
         }
         return true;
     }
 
-    public void RemoveRecipe (List<Item> recipe)
+    public void RemoveRecipe (Item[] recipe)
     {
         foreach (Item item in recipe)
         {
-            listItem[item.ID] -= item.Amount;
-            if (listItem[item.ID] < 0) throw new Exception("Not Enought Item");
+
         }
     }
 }

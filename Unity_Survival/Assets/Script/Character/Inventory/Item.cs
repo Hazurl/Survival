@@ -38,21 +38,23 @@ public class Item
         }
     }
 
-    public int Add (int amount)
+    public int Add (uint amount)
     {
-        if (amount < 0) throw new Exception("Can't add a negative number");
-        return Amount += amount;
+        return Amount += (int)amount;
     }
 
-    public int Remove(int amount)
+    public int Remove(uint amount)
     {
-        if (amount < 0) throw new Exception("Can't remove a negative number");
-        return Amount -= Math.Min(amount, Amount);
+        return Amount -= Math.Min((int)amount, Amount);
     }
 
     public enum ItemID
     {
-        WOOD,
-        STONE
+        LOG,            //Buche
+        BRANCH,         //Branche
+        BARK,           //Ecorce
+        STONE_SHARP,    //Pierre pointu
+        STONE_FLAT,     //Pierre plate
+        PEBBLE          //Caillou
     }
 }

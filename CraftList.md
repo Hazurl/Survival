@@ -1,5 +1,6 @@
 #**Liste des crafts :**
 - [x] = Mis en place <br/>
+Debloquage des crafts :<br/>
 **RECHERCHE** = Le joueur doit rechercher avec l'objet indique en main<br/>
 **CONDITION** = Le joueur doit répondre à la condition pour debloquer le craft<br/>
 **PERCEPTION** = Le joueur peut remarquer qqch afin de debloquer le craft lorsqu'il manipule l'objet indique<br/>

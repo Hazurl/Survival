@@ -1,8 +1,8 @@
 #**Liste des crafts :**
-- [x] = Mis en place
-**RECHERCHE** = Le joueur doit rechercher avec l'objet indique en main
-**CONDITION** = Le joueur doit répondre à la condition pour debloquer le craft
-**PERCEPTION** = Le joueur peut remarquer qqch afin de debloquer le craft lorsqu'il manipule l'objet indique
+- [x] = Mis en place <br/>
+**RECHERCHE** = Le joueur doit rechercher avec l'objet indique en main<br/>
+**CONDITION** = Le joueur doit répondre à la condition pour debloquer le craft<br/>
+**PERCEPTION** = Le joueur peut remarquer qqch afin de debloquer le craft lorsqu'il manipule l'objet indique<br/>
 
 ##**OUTILS :**
 
@@ -31,8 +31,10 @@
 
 **Corde :** Fibre
   > - [ ] **RECHERCHE** Fibre
+  
+**Résine :** Ecorce
+  > - [ ] **PERCEPTION** Ecorce
 
 **Colle :** Résine + cendre *avec* feu
-  > - [ ] **PERCEPTION** Ecorce *'Il manque un element'*
-       ET **RECHERCHE** Resine *avec* feu à proximiter
+  > - [ ] **RECHERCHE** Resine *avec* feu à proximiter
        

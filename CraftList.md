@@ -37,4 +37,3 @@
 
 **Colle :** Résine + cendre *avec* feu
   > - [ ] **RECHERCHE** Resine *avec* feu à proximiter
-       

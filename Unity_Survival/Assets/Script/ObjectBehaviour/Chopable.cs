@@ -4,7 +4,7 @@ using UnityEngine.UI;
 using System;
 
 [RequireComponent(typeof(CapsuleCollider))]
-[RequireComponent(typeof(MeshRenderer))]
+[RequireComponent(typeof(MeshRenderer))] //TODO : Mettre une anim à la place d'effacer le mesh
 public class Chopable : MonoBehaviour, IDebuguable
 {
 
@@ -48,7 +48,12 @@ public class Chopable : MonoBehaviour, IDebuguable
 
     }
 
-    //Currently, this return just a boolean, maybe return a list of item ?
+    /// <summary>
+    /// Fait prendre des dégâts à l'Objet
+    /// </summary>
+    /// <param name="dam">Le nombre de dégâts</param>
+    /// <param name="items">La liste des items droppables si l'Objet en drop</param>
+    /// <returns>True si L'objet drop des items</returns>
     public bool Chop(int dam, out List<Item> items)
     {
         items = new List<Item>();
@@ -60,16 +65,23 @@ public class Chopable : MonoBehaviour, IDebuguable
         //At this point the three has been entirely chop, so play the animation and update drop list
         BreakThree();
         //Drop 1 to 3 Wood (maybe it should be a paremeter ?)
-        items.Add(new Item(Item.ItemID.LOG, UnityEngine.Random.Range(1, 3)));
+        items.Add(new Item(Item.ItemID.LOG, (uint)UnityEngine.Random.Range(1, 3)));
 
         return true; //The three is dead
     }
 
+    /// <summary>
+    /// Retourne true si l'Objet est mort (sa vie est inférieur à 0)
+    /// </summary>
+    /// <returns>Retourne true si l'Objet est mort</returns>
     public bool isDead()
     {
         return currentLife <= 0;
     }
 
+    /// <summary>
+    /// Joue l'animation et active son décompteur de croissance
+    /// </summary>
     private void BreakThree()
     {
         //On enleve l'affichage du tronc
@@ -81,12 +93,20 @@ public class Chopable : MonoBehaviour, IDebuguable
         //On bouge le collider
         collider.center = POS_COLLIDER_NOTCHOP;
     }
-
+    
+    /// <summary>
+    /// Retourne la description de l'Objet
+    /// </summary>
+    /// <returns>Retourne la description de l'Objet</returns>
     string IDebuguable.getDescription()
     {
         return currentLife.ToString() + '/' + maxLife.ToString();
     }
 
+    /// <summary>
+    /// Retourne le nom de l'Objet
+    /// </summary>
+    /// <returns>Retourne le nom de l'Objet</returns>
     string IDebuguable.getName()
     {
         return "Three";

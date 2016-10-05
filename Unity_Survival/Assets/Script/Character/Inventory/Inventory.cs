@@ -9,13 +9,10 @@ public class Inventory
 	public Inventory(uint capacity, Item[] items = null)
 	{
         inventory = new Item[capacity];
+
         if (items != null)
-        {
             foreach (var item in items)
-            {
-                if(!TryAddItem(item)) break;
-            }
-        }
+                if (!TryAddItem(item)) break;
 	}
 
     public void display ()
@@ -26,9 +23,7 @@ public class Inventory
     public void AddItems (Item[] items)
     {
         foreach (Item item in items)
-        {
             if (!TryAddItem(item)) break;
-        }
     }
 
     public bool TryAddItem(Item item)
@@ -36,7 +31,7 @@ public class Inventory
         return false;
     }
 
-    public bool haveCompleteRecipe(Item[] recipeList)
+    /*public bool haveCompleteRecipe(Item[] recipeList)
     {
         foreach (Item item in recipeList)
         {
@@ -51,5 +46,5 @@ public class Inventory
         {
 
         }
-    }
+    }*/
 }

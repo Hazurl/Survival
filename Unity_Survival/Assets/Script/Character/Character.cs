@@ -51,6 +51,9 @@ public class Character : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Vérifie Les touches de déplacement et déplace le personnage si l'une d'elle est enfoncé
+    /// </summary>
     void InputMovement ()
     {
         if (Input.anyKey)
@@ -76,6 +79,9 @@ public class Character : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Update la rotation du personnage en fonction du pointeur de la souris
+    /// </summary>
     void SetLookRotation ()
     {
         Ray ray = cam.ScreenPointToRay(Input.mousePosition);
@@ -88,6 +94,10 @@ public class Character : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Essaye de couper du bois
+    /// <para>Ne coupe du bois que si le rechargement du coup est à 0, que le bouton gauche de la souris est activé et qu'un arbre se trouve devant</para>
+    /// </summary>
     void Chop ()
     {
         if (TimeToReload <= 0)

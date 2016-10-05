@@ -40,7 +40,7 @@ public class Character : MonoBehaviour {
         Chop();
 
         //If 'E' KW is press, display the inventory
-        if (Input.GetKeyDown(KeyCode.E))
+        if (Input.GetKeyDown(KeyCode.I))
         {
             inventory.display();
         }
@@ -91,7 +91,7 @@ public class Character : MonoBehaviour {
             if (Physics.Raycast(tf.position, transform.TransformDirection(Vector3.forward), out hit, CHOP_DISTANCE))
             {
                 Debug.DrawRay(tf.position, transform.TransformDirection(Vector3.forward), Color.red);
-                IChopable target = hit.collider.gameObject.GetComponent<IChopable>();
+                Chopable target = hit.collider.gameObject.GetComponent<Chopable>();
 
                 if (target == null || target.isDead()) return;
 

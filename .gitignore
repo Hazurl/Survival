@@ -50,3 +50,5 @@ Script CDC.docx.meta
 *.docx
 *.meta
 *.info
+*.dll
+Temp/

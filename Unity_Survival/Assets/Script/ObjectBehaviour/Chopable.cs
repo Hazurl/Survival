@@ -11,9 +11,6 @@ public class Chopable : MonoBehaviour, IDebuguable
     public int maxLife = 100;
     private int currentLife;
 
-    private const float TIME_BETWEEN_DAMAGE = 1;
-    private float timeFromLastHit = 0;
-
     private const float TIME_TO_GROW = 5; //2 minutes
     private float timeToGrow = 0;
     private MeshRenderer ThreeGrowable;
@@ -37,10 +34,6 @@ public class Chopable : MonoBehaviour, IDebuguable
 
     void Update()
     {
-        //Control waiting time between two hit
-        if (timeFromLastHit > 0)
-            timeFromLastHit -= Time.deltaTime;
-
         //Control the growing
         if (timeToGrow > 0)
         {
@@ -56,23 +49,20 @@ public class Chopable : MonoBehaviour, IDebuguable
     }
 
     //Currently, this return just a boolean, maybe return a list of item ?
-    public bool Damage(int dam, out List<Item> items)
+    public bool Chop(int dam, out List<Item> items)
     {
         items = new List<Item>();
 
-        if (timeFromLastHit <= 0)
-        {
-            timeFromLastHit = TIME_BETWEEN_DAMAGE;
-            currentLife -= dam;
-        }
+        currentLife -= dam;
 
-        if (currentLife > 0) return false;
+        if (currentLife > 0) return false; //The three is still alive
 
+        //At this point the three has been entirely chop, so play the animation and update drop list
         BreakThree();
-
         //Drop 1 to 3 Wood (maybe it should be a paremeter ?)
-        items.Add(new Item(Item.ItemID.WOOD, UnityEngine.Random.Range(1, 3)));
-        return true;
+        items.Add(new Item(Item.ItemID.LOG, UnityEngine.Random.Range(1, 3)));
+
+        return true; //The three is dead
     }
 
     public bool isDead()

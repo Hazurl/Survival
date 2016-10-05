@@ -9,6 +9,11 @@ public class Character : MonoBehaviour {
     //FIXME : The damage on a three can't be just an integer
     public const int CHOP_DAMAGE_PER_SECOND = 20;
     public const float CHOP_DISTANCE = 20f;
+    public const uint INVENTORY_CAPACITY = 25; // 5 * 5 
+
+    //Reload Time
+    public const float RELOAD_TIME = 0.5f; //0.5 secondes
+    private float TimeToReload = 0;
 
     //Transform
     private Transform tf;
@@ -25,7 +30,7 @@ public class Character : MonoBehaviour {
         offset = camTf.position - tf.position;
 
         //Initialize inventory, later we should initialize from a save
-        inventory = new Inventory();
+        inventory = new Inventory(INVENTORY_CAPACITY); 
     }
 
     void Update () {
@@ -85,22 +90,29 @@ public class Character : MonoBehaviour {
 
     void Chop ()
     {
-        if (Input.GetMouseButton(0)) //left button
+        if (TimeToReload <= 0)
         {
-            RaycastHit hit;
-            if (Physics.Raycast(tf.position, transform.TransformDirection(Vector3.forward), out hit, CHOP_DISTANCE))
+            if (Input.GetMouseButton(0)) //left button
             {
-                Debug.DrawRay(tf.position, transform.TransformDirection(Vector3.forward), Color.red);
-                Chopable target = hit.collider.gameObject.GetComponent<Chopable>();
+                RaycastHit hit;
+                if (Physics.Raycast(tf.position, transform.TransformDirection(Vector3.forward), out hit, CHOP_DISTANCE))
+                {
+                    Debug.DrawRay(tf.position, transform.TransformDirection(Vector3.forward), Color.red);
+                    Chopable target = hit.collider.gameObject.GetComponent<Chopable>();
 
-                if (target == null || target.isDead()) return;
+                    if (target == null || target.isDead()) return;
 
-                List<Item> drop = new List<Item>();
+                    //Damage th three, get the drop list of items if he die, and finally updtae reload Time
+                    List<Item> drop = new List<Item>();
+                    if (target.Chop(CHOP_DAMAGE_PER_SECOND, out drop)) Debug.Log("A three has been chop");
+                    inventory.AddItems(drop.ToArray());
 
-                if (target.Damage(CHOP_DAMAGE_PER_SECOND, out drop)) Debug.Log("The three is dead !!!");
-
-                inventory.AddItem(drop);
+                    TimeToReload = RELOAD_TIME;
+                }
             }
+        } else
+        {
+            TimeToReload -= Time.deltaTime;
         }
     }
 }

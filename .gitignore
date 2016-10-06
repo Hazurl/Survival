@@ -54,3 +54,9 @@ Script CDC.docx.meta
 Temp/
 Unity_Survival/Library/metadata/
 *metadata*
+metadata
+/metadata
+metadata/
+\metadata
+metadata\
+metadata/*

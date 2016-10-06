@@ -7,13 +7,13 @@ public class Item
     /// </summary>
     /// <param name="ID">ID de l'Item, voir <see cref="Item.ItemID"/></param>
     /// <param name="amount">Quantité initiale de l'Item</param>
-    public Item(ItemID ID, uint amount)
+    public Item(ItemID ID, uint amount = 1)
     {
         this.ID = ID;
         this.Amount = amount;
     }
 
-    //The Item is defined by an ID, an amount and some data 
+    //The Item is defined by an ID, an amount and some modifier
 
     /// <summary>
     /// ID de l'Item
@@ -60,6 +60,11 @@ public class Item
         return Amount -= Math.Min(amount, Amount);
     }
 
+    public void Clear()
+    {
+        Amount = 0;
+    }
+
     /// <summary>
     /// Essaye de convertir un integer en un Item
     /// <para>Retourne true si la conversion à réussie</para>
@@ -72,9 +77,7 @@ public class Item
         item = default(ItemID);
         bool success = Enum.IsDefined(typeof(ItemID), ID);
         if (success)
-        {
             item = (ItemID)Enum.ToObject(typeof(ItemID), ID);
-        }
         return success;
     }
 

@@ -114,8 +114,13 @@ public class Character : MonoBehaviour {
 
                     //Damage th three, get the drop list of items if he die, and finally updtae reload Time
                     List<Item> drop = new List<Item>();
-                    if (target.Chop(CHOP_DAMAGE_PER_SECOND, out drop)) Debug.Log("A three has been chop");
-                    inventory.AddItems(drop.ToArray());
+                    if (target.Chop(CHOP_DAMAGE_PER_SECOND, out drop))
+                    {
+                        Debug.Log("A three has been chop");
+                        inventory.AddItems(ref drop);
+
+                        if (drop.Count > 0) Debug.Log("Inventory Overflow");
+                    }
 
                     TimeToReload = RELOAD_TIME;
                 }

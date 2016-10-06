@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class Item
 {
-    #region Attribut
+    #region Attributs
     public readonly ItemID id;
     public Vector2 spaceRequired { get; protected set; }
     #endregion
@@ -20,11 +20,11 @@ public class Item
     }
     #endregion
 
-    #region Method
+    #region Methods
 
     #endregion
 
-    #region Enum
+    #region Enums
     /// <summary>
     /// Convert The integer into an Item ID, if the ID is not existing, return ItemID.INVALID
     /// </summary>

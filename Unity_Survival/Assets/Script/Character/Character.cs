@@ -9,7 +9,7 @@ public class Character : MonoBehaviour {
     //FIXME : The damage on a three can't be just an integer
     public const int CHOP_DAMAGE_PER_SECOND = 20;
     public const float CHOP_DISTANCE = 20f;
-    public const uint INVENTORY_CAPACITY = 25; // 5 * 5 
+    public const int INVENTORY_CAPACITY_X = 5, INVENTORY_CAPACITY_Y = 5;
 
     //Reload Time
     public const float RELOAD_TIME = 0.5f; //0.5 secondes
@@ -30,7 +30,7 @@ public class Character : MonoBehaviour {
         offset = camTf.position - tf.position;
 
         //Initialize inventory, later we should initialize from a save
-        inventory = new Inventory(INVENTORY_CAPACITY); 
+        inventory = new Inventory(new Inventory.InventorySpace(INVENTORY_CAPACITY_X, INVENTORY_CAPACITY_Y)); 
     }
 
     void Update () {
@@ -47,7 +47,7 @@ public class Character : MonoBehaviour {
         //If 'E' KW is press, display the inventory
         if (Input.GetKeyDown(KeyCode.I))
         {
-            inventory.display();
+            //inventory.display();
         }
     }
 
@@ -117,7 +117,7 @@ public class Character : MonoBehaviour {
                     if (target.Chop(CHOP_DAMAGE_PER_SECOND, out drop))
                     {
                         Debug.Log("A three has been chop");
-                        inventory.AddItems(ref drop);
+                        //inventory.AddItems(ref drop);
 
                         if (drop.Count > 0) Debug.Log("Inventory Overflow");
                     }

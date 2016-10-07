@@ -51,13 +51,13 @@ public class Inventory
 		if( pos == null )
 			return false;
 
-		for( int i = pos.x; i < item.spaceRequired.x; i++ )
-			for( int j = pos.y; j < item.spaceRequired.y; j++ )
+		for( int i = pos.x; i < item.spaceRequired.x + pos.x; i++ )
+			for( int j = pos.y; j < item.spaceRequired.y + pos.y; j++ )
 				virtualInventory[ i, j ] = item;
 
 		itemPosition[ item.uniqueId ] = pos;
-		Debug.Log( "Add " + item.id.ToString() + " at position (" + pos.x.ToString() + ", " + pos.y.ToString() + ")" + 
-            " - Space (" + item.spaceRequired.x + ", " + item.spaceRequired.y+")");
+		//Debug.Log( "Add " + item.id.ToString() + " at position (" + pos.x.ToString() + ", " + pos.y.ToString() + ")" + 
+        //    " - Space (" + item.spaceRequired.x + ", " + item.spaceRequired.y+")");
 		return true;
 	}
 
@@ -93,23 +93,34 @@ public class Inventory
 		for (int i = 0; i < inventorySpace.x - space.x + 1;  i++)
 			for (int j = 0; j < inventorySpace.y - space.y + 1;  j++) {
 				bool PosOk = true;
-				for( int _i = 0; _i < space.x; _i++ )
-					for( int _j = 0; _j < space.y; _j++ )
-						if( virtualInventory[ _i + i, _j + j ] != null )
-							PosOk = false;
+                for( int _i = 0; _i < space.x; _i++ ) {
+                    for( int _j = 0; _j < space.y; _j++ ) {
+                        if( virtualInventory[ _i + i, _j + j ] != null ) {
+                            PosOk = false;
+                            j += _j;
+                            break;
+                        }
+                    }
+                    if( !PosOk ) break;
+                }
+                    
 				if( PosOk )
 					return new InventoryPosition( i, j );
 			}
-		//if we are here, It's beacause there is no space for this Item
+        //if we are here, It's beacause there is no space for this Item
+        Debug.LogError( "No Space for " + space.x + " : " + space.y );
 		return null;
 	}
 
+    /// <summary>
+    /// Display On screen The inventory
+    /// </summary>
 	public void Display () {
 		string text = "Inventory : \n";
 		for( int i = 0; i < inventorySpace.x; i++ ) {
 			for( int j = 0; j < inventorySpace.y; j++ )
 				if( virtualInventory[ i, j ] == null )
-					text += '-';
+					text += '▮';
 				else
 					text += virtualInventory[i, j].uniqueId;
 			text += '\n';

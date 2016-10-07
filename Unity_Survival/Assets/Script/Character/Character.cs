@@ -52,8 +52,8 @@ public class Character : MonoBehaviour {
 
 		//Debug Inventory
 		if( Input.GetKeyDown( KeyCode.L ) )
-			inventory.AddItem( new Item( Item.ItemID.LOG, new Inventory.InventorySpace( Random.Range(1, 4), Random.Range( 1, 4 ) ) ) );
-	}
+            inventory.AddItem( new Item( Item.ItemID.LOG, new Inventory.InventorySpace( Random.Range(1, 4), Random.Range( 1, 4 ) ) ) );
+    }
 
     /// <summary>
     /// Vérifie Les touches de déplacement et déplace le personnage si l'une d'elle est enfoncé

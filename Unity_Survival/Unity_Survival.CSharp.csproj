@@ -66,6 +66,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Gloabl_GO.cs" />
     <Compile Include="Assets\Script\Character\Character.cs" />
     <Compile Include="Assets\Script\Character\Inventory\Inventory.cs" />
     <Compile Include="Assets\Script\Character\Inventory\Item.cs" />

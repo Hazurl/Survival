@@ -8,7 +8,7 @@ public class Item
 	private static int UniqueId = 0;
 	private static List<Item> ItemUniqueId = new List<Item>();
 
-	public static Item getItemfromUniqueFrom (int uniqueId) {
+	public static Item getItemfromUniqueId (int uniqueId) {
 		return ItemUniqueId[ uniqueId ];
 	}
 	#endregion

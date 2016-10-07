@@ -71,8 +71,8 @@ public class Inventory
 		if((pos = itemPosition[ item.uniqueId ]) == null )
 			return false;
 
-		for( int i = pos.x; i < item.spaceRequired.x; i++ )
-			for( int j = pos.y; j < item.spaceRequired.y; j++ )
+		for( int i = pos.x; i < item.spaceRequired.x + pos.x; i++ )
+			for( int j = pos.y; j < item.spaceRequired.y + pos.y; j++ )
 				virtualInventory[ i, j ] = null;
 
 		itemPosition.Remove( item.uniqueId );
@@ -115,8 +115,9 @@ public class Inventory
     /// <summary>
     /// Display On screen The inventory
     /// </summary>
-	public void Display () {
-		string text = "Inventory : \n";
+	public void Display (RectTransform environement) {
+        #region Debug.Log
+        string text = "Inventory : \n";
 		for( int i = 0; i < inventorySpace.x; i++ ) {
 			for( int j = 0; j < inventorySpace.y; j++ )
 				if( virtualInventory[ i, j ] == null )
@@ -126,7 +127,26 @@ public class Inventory
 			text += '\n';
 		}
 		Debug.Log( text );
-	}
+        #endregion
+        #region OnScreen 
+        float width = environement.rect.width / inventorySpace.x;
+        float height = environement.rect.height / inventorySpace.y;
+
+        Vector3 offset = environement.offsetMax;
+        
+        for (int i = 0; i < inventorySpace.x; ++i ) {
+            for (int j = 0; j < inventorySpace.y; ++j ) {
+                GameObject slot = GameObject.Instantiate( Gloabl_GO.Slot, Gloabl_GO.SlotsPanel.transform ) as GameObject;
+                slot.transform.localPosition = new Vector3( -width * i, -height * j, 0 ) + offset;
+                RectTransform rect = slot.GetComponent<RectTransform>();
+                /*rect.rect.width = width;
+                rect.rect.height = height;
+                rect.*/
+                slot.name = "Slot_" + i + "_" + j;
+            }
+        }
+        #endregion
+    }
     #endregion
 
     #region Structures

@@ -46,13 +46,7 @@ public class Character : MonoBehaviour {
 
         //If 'E' KW is press, display the inventory
         if (Input.GetKeyDown(KeyCode.I))
-        {
-            inventory.Display();
-        }
-
-		//Debug Inventory
-		if( Input.GetKeyDown( KeyCode.L ) )
-            inventory.AddItem( new Item( Item.ItemID.LOG, new Inventory.InventorySpace( Random.Range(1, 4), Random.Range( 1, 4 ) ) ) );
+            inventory.Display(Gloabl_GO.SlotsPanel);
     }
 
     /// <summary>

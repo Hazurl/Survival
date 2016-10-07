@@ -10,31 +10,31 @@ public class Inventory
     //The List of Item in the inventory, because a Item can take more than one space
     private Dictionary<int, InventoryPosition> itemPosition;
 
-    public readonly InventorySpace Space;
+    public readonly InventorySpace inventorySpace;
     #endregion
 
     #region Constructors
     /// <summary>
     /// Constructors
     /// </summary>
-    /// <param name="Space">The Space of the inventory, this is a class from <see cref="Inventory.InventorySpace"/></param>
+    /// <param name="Space">The inventorySpace of the inventory, this is a class from <see cref="Inventory.InventorySpace"/></param>
     /// <param name="inventory">The inventory copied in the current, it must be smaller or of the same size</param>
     public Inventory (InventorySpace Space, Inventory inventory = null) {
         //I don't want to have a negative array, an inventory must be more or equals than 1 * 1 array
         if( Space.x < 1 || Space.y < 1 ) throw new Exception( "Inventory can't have a negative space" );
 
         //Initialize Attribut
-        this.Space = Space;
+        this.inventorySpace = Space;
         virtualInventory = new Item[ Space.x, Space.y ];
         itemPosition = new Dictionary<int, InventoryPosition>( Space.Lenght );
 
         if( inventory == null ) return;
         //Add Some Start Item in the inventory
         //But we can't do this if the space is less than this inventory
-        if( Space.x < inventory.Space.x || Space.y < inventory.Space.y ) return;
+        if( Space.x < inventory.inventorySpace.x || Space.y < inventory.inventorySpace.y ) return;
 
-        for( int i = 0; i < inventory.Space.x; ++i )
-            for( int j = 0; j < inventory.Space.y; ++j )
+        for( int i = 0; i < inventory.inventorySpace.x; ++i )
+            for( int j = 0; j < inventory.inventorySpace.y; ++j )
                 virtualInventory[ i, j ] = inventory.virtualInventory[ i, j ];
     }
 	#endregion
@@ -51,14 +51,21 @@ public class Inventory
 		if( pos == null )
 			return false;
 
-		for( int i = 0; i < Space.x; i++ )
-			for( int j = 0; j < Space.y; j++ )
+		for( int i = pos.x; i < item.spaceRequired.x; i++ )
+			for( int j = pos.y; j < item.spaceRequired.y; j++ )
 				virtualInventory[ i, j ] = item;
 
 		itemPosition[ item.uniqueId ] = pos;
+		Debug.Log( "Add " + item.id.ToString() + " at position (" + pos.x.ToString() + ", " + pos.y.ToString() + ")" + 
+            " - Space (" + item.spaceRequired.x + ", " + item.spaceRequired.y+")");
 		return true;
 	}
 
+	/// <summary>
+	/// Remove an Item of this inventory
+	/// </summary>
+	/// <param name="item">The Item to remve</param>
+	/// <returns>Retrn the success of this action</returns>
 	public bool RemoveItem ( Item item ) {
 		InventoryPosition pos;
 		if((pos = itemPosition[ item.uniqueId ]) == null )
@@ -80,14 +87,14 @@ public class Inventory
 	/// <returns>The position of the item or null if he can't</returns>
 	private InventoryPosition FindPositionFor( InventorySpace space ) {
 		//Return null if the Inventory space is smaller than the item
-		if( Space.x < space.x || Space.y < space.y )
+		if( inventorySpace.x < space.x || inventorySpace.y < space.y )
 			return null;
 
-		for (int i = 0; i < Space.x - space.x;  i++)
-			for (int j = 0; j < Space.y - space.y;  j++) {
+		for (int i = 0; i < inventorySpace.x - space.x;  i++)
+			for (int j = 0; j < inventorySpace.y - space.y;  j++) {
 				bool PosOk = true;
-				for( int _i = 0; _i < Space.x; _i++ )
-					for( int _j = 0; _j < Space.y; _j++ )
+				for( int _i = 0; _i < space.x; _i++ )
+					for( int _j = 0; _j < space.y; _j++ )
 						if( virtualInventory[ _i + i, _j + j ] != null )
 							PosOk = false;
 				if( PosOk )
@@ -95,6 +102,19 @@ public class Inventory
 			}
 		//if we are here, It's beacause there is no space for this Item
 		return null;
+	}
+
+	public void Display () {
+		string text = "Inventory : \n";
+		for( int i = 0; i < inventorySpace.x; i++ ) {
+			for( int j = 0; j < inventorySpace.y; j++ )
+				if( virtualInventory[ i, j ] == null )
+					text += '-';
+				else
+					text += virtualInventory[i, j].uniqueId;
+			text += '\n';
+		}
+		Debug.Log( text );
 	}
     #endregion
 
@@ -124,7 +144,7 @@ public class Inventory
 	/// </summary>
 	private class InventoryPosition {
 		#region Attributs
-		int x, y;
+		public readonly int x, y;
 		#endregion
 
 		#region Constructors

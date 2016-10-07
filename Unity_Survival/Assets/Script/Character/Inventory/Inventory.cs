@@ -71,8 +71,8 @@ public class Inventory
 		if((pos = itemPosition[ item.uniqueId ]) == null )
 			return false;
 
-		for( int i = 0; i < item.spaceRequired.x; i++ )
-			for( int j = 0; j < item.spaceRequired.y; j++ )
+		for( int i = pos.x; i < item.spaceRequired.x; i++ )
+			for( int j = pos.y; j < item.spaceRequired.y; j++ )
 				virtualInventory[ i, j ] = null;
 
 		itemPosition.Remove( item.uniqueId );
@@ -90,8 +90,8 @@ public class Inventory
 		if( inventorySpace.x < space.x || inventorySpace.y < space.y )
 			return null;
 
-		for (int i = 0; i < inventorySpace.x - space.x;  i++)
-			for (int j = 0; j < inventorySpace.y - space.y;  j++) {
+		for (int i = 0; i < inventorySpace.x - space.x + 1;  i++)
+			for (int j = 0; j < inventorySpace.y - space.y + 1;  j++) {
 				bool PosOk = true;
 				for( int _i = 0; _i < space.x; _i++ )
 					for( int _j = 0; _j < space.y; _j++ )

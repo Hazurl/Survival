@@ -45,7 +45,7 @@ public class Character : MonoBehaviour {
         //Choping
         Chop();
 
-        //If 'E' KW is press, display the inventory
+        //If 'E' KW is press, toggle the inventory
         if( Input.GetKeyDown( KeyCode.I ) )
             Inventory.ToggleInventory();
 

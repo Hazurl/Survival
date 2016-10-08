@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System;
 using System.Collections.Generic;
+using UnityEngine.UI;
 
 public class Inventory
 {
@@ -11,6 +12,16 @@ public class Inventory
     private Dictionary<int, InventoryPosition> itemPosition;
 
     public readonly InventorySpace inventorySpace;
+    public string name;
+    #endregion
+
+    #region Constante
+    private const int SIZE_SLOT = 50;
+    #endregion
+
+    #region staticAttributs
+    private static Dictionary<string, GameObject> inventoryPanels = new Dictionary<string, GameObject>();
+    private static Dictionary<string, Inventory> inventoryName = new Dictionary<string, Inventory>();
     #endregion
 
     #region Constructors
@@ -19,7 +30,7 @@ public class Inventory
     /// </summary>
     /// <param name="Space">The inventorySpace of the inventory, this is a class from <see cref="Inventory.InventorySpace"/></param>
     /// <param name="inventory">The inventory copied in the current, it must be smaller or of the same size</param>
-    public Inventory (InventorySpace Space, Inventory inventory = null) {
+    public Inventory (InventorySpace Space, string name, Inventory inventory = null, bool showInventory = false) {
         //I don't want to have a negative array, an inventory must be more or equals than 1 * 1 array
         if( Space.x < 1 || Space.y < 1 ) throw new Exception( "Inventory can't have a negative space" );
 
@@ -27,15 +38,22 @@ public class Inventory
         this.inventorySpace = Space;
         virtualInventory = new Item[ Space.x, Space.y ];
         itemPosition = new Dictionary<int, InventoryPosition>( Space.Lenght );
+        this.name = name;
 
-        if( inventory == null ) return;
-        //Add Some Start Item in the inventory
-        //But we can't do this if the space is less than this inventory
-        if( Space.x < inventory.inventorySpace.x || Space.y < inventory.inventorySpace.y ) return;
+        if( inventory != null ) {
+            //Add Some Start Item in the inventory
+            //But we can't do this if the space is less than this inventory
+            if( Space.x < inventory.inventorySpace.x || Space.y < inventory.inventorySpace.y ) return;
 
-        for( int i = 0; i < inventory.inventorySpace.x; ++i )
-            for( int j = 0; j < inventory.inventorySpace.y; ++j )
-                virtualInventory[ i, j ] = inventory.virtualInventory[ i, j ];
+            for( int i = 0; i < inventory.inventorySpace.x; ++i )
+                for( int j = 0; j < inventory.inventorySpace.y; ++j )
+                    virtualInventory[ i, j ] = inventory.virtualInventory[ i, j ];
+        }
+
+        //Add Inventory into the inventory Panel
+        if( !showInventory ) return;
+        AddInventoryPanel( CreateInventoryPanel(name) );
+        inventoryName.Add( name, this );
     }
 	#endregion
 
@@ -56,9 +74,26 @@ public class Inventory
 				virtualInventory[ i, j ] = item;
 
 		itemPosition[ item.uniqueId ] = pos;
-		//Debug.Log( "Add " + item.id.ToString() + " at position (" + pos.x.ToString() + ", " + pos.y.ToString() + ")" + 
-        //    " - Space (" + item.spaceRequired.x + ", " + item.spaceRequired.y+")");
-		return true;
+
+        //Create the sprite into the inventory Panel :
+        GameObject sprite = GameObject.Instantiate( Global.ItemSprite, inventoryPanels[ name ].transform ) as GameObject;
+
+        //Name
+        sprite.name = item.id.ToString() + "_" + pos.x + "_" + pos.y;
+
+        //Sprite
+        sprite.GetComponent<Image>().sprite = Resources.Load<Sprite>( "Items/" + item.id.ToString() );
+
+        RectTransform rect = sprite.GetComponent<RectTransform>();
+
+        //Position
+        rect.anchoredPosition = new Vector3( pos.x * SIZE_SLOT, -pos.y * SIZE_SLOT, 0 );
+
+        //Size
+        rect.SetSizeWithCurrentAnchors( RectTransform.Axis.Horizontal, SIZE_SLOT );
+        rect.SetSizeWithCurrentAnchors( RectTransform.Axis.Vertical, SIZE_SLOT );
+
+        return true;
 	}
 
 	/// <summary>
@@ -76,7 +111,18 @@ public class Inventory
 				virtualInventory[ i, j ] = null;
 
 		itemPosition.Remove( item.uniqueId );
-		return true;
+
+        //Remove the Sprite
+        GameObject curInv = inventoryPanels[ name ];
+        for(int i = curInv.transform.childCount - 1; i >= 0; --i ) {
+            Transform curChild = curInv.transform.GetChild( i );
+            if ( curChild.name == item.id.ToString() + "_" + pos.x + "_" + pos.y ) {
+                GameObject.Destroy( curChild.gameObject );
+                return true;
+            }
+        }
+
+        return true;
 	}
 
 	/// <summary>
@@ -90,11 +136,11 @@ public class Inventory
 		if( inventorySpace.x < space.x || inventorySpace.y < space.y )
 			return null;
 
-		for (int i = 0; i < inventorySpace.x - space.x + 1;  i++)
-			for (int j = 0; j < inventorySpace.y - space.y + 1;  j++) {
-				bool PosOk = true;
-                for( int _i = 0; _i < space.x; _i++ ) {
-                    for( int _j = 0; _j < space.y; _j++ ) {
+        for( int j = 0; j < inventorySpace.y - space.y + 1; j++ ) {
+            for( int i = 0; i < inventorySpace.x - space.x + 1; i++ ) {
+                bool PosOk = true;
+                for( int _j = 0; _j < space.y; _j++ ) {
+                    for( int _i = 0; _i < space.x; _i++ ) {
                         if( virtualInventory[ _i + i, _j + j ] != null ) {
                             PosOk = false;
                             j += _j;
@@ -103,10 +149,11 @@ public class Inventory
                     }
                     if( !PosOk ) break;
                 }
-                    
-				if( PosOk )
-					return new InventoryPosition( i, j );
-			}
+
+                if( PosOk )
+                    return new InventoryPosition( i, j );
+            }
+        }
         //if we are here, It's beacause there is no space for this Item
         Debug.LogError( "No Space for " + space.x + " : " + space.y );
 		return null;
@@ -115,7 +162,7 @@ public class Inventory
     /// <summary>
     /// Display On screen The inventory
     /// </summary>
-	public void Display (RectTransform environement) {
+	public GameObject CreateInventoryPanel (string name) {
         #region Debug.Log
         string text = "Inventory : \n";
 		for( int i = 0; i < inventorySpace.x; i++ ) {
@@ -129,23 +176,93 @@ public class Inventory
 		Debug.Log( text );
         #endregion
         #region OnScreen 
-        float width = environement.rect.width / inventorySpace.x;
-        float height = environement.rect.height / inventorySpace.y;
+        //The Panel which holding slots
+        GameObject panel = GameObject.Instantiate( Global.SlotsPanel, Global.InventoryPanel.transform ) as GameObject;
+        panel.name = name;
+        panel.transform.localRotation = Quaternion.identity;
 
-        Vector3 offset = environement.offsetMax;
-        
-        for (int i = 0; i < inventorySpace.x; ++i ) {
-            for (int j = 0; j < inventorySpace.y; ++j ) {
-                GameObject slot = GameObject.Instantiate( Gloabl_GO.Slot, Gloabl_GO.SlotsPanel.transform ) as GameObject;
-                slot.transform.localPosition = new Vector3( -width * i, -height * j, 0 ) + offset;
-                RectTransform rect = slot.GetComponent<RectTransform>();
-                /*rect.rect.width = width;
-                rect.rect.height = height;
-                rect.*/
-                slot.name = "Slot_" + i + "_" + j;
+        //Slots        
+        for (int x = 0; x < inventorySpace.x; ++x ) {
+            for (int y = 0; y < inventorySpace.y; ++y ) {
+                //Create the current Slot
+                GameObject slot = GameObject.Instantiate( Global.Slot, panel.transform ) as GameObject;
+                RectTransform rectSlot = slot.GetComponent<RectTransform>();
+
+                //Change her Position
+                rectSlot.anchoredPosition = new Vector3( SIZE_SLOT * x, -SIZE_SLOT * y, 0 );
+
+                //Change Size
+                rectSlot.SetSizeWithCurrentAnchors( RectTransform.Axis.Horizontal, SIZE_SLOT );
+                rectSlot.SetSizeWithCurrentAnchors( RectTransform.Axis.Vertical, SIZE_SLOT );
+
+                //Update the name just to have a nice hierarchy
+                slot.name = "Slot_" + x + "_" + y;
+           } 
+        }
+
+        return panel;
+        #endregion
+    }
+    #endregion
+
+    #region static
+    public static void DisplayInventory () {
+        UpdateInventories();
+        Global.InventoryPanel.SetActive( true );
+    }
+
+    public static void HideInventory() {
+        Global.InventoryPanel.SetActive( false );
+    }
+
+    public static void ToggleInventory () {
+        if ( !Global.InventoryPanel.activeSelf ) {
+            UpdateInventories();
+        }
+        Global.InventoryPanel.SetActive( !Global.InventoryPanel.activeSelf );
+    }
+
+    private static void AddInventoryPanel (GameObject panel) {
+        inventoryPanels.Add( panel.name, panel );
+        panel.transform.SetParent( Global.InventoryPanel.transform );
+        panel.GetComponent<RectTransform>().anchoredPosition = Vector3.zero;
+    }
+
+    private static void RemoveInventoryPanel( string name ) {
+        if( !inventoryPanels.ContainsKey( name ) ) return;
+
+        GameObject.Destroy( inventoryPanels[ name ] );
+        inventoryPanels.Remove( name );
+    }
+
+    private static void UpdateInventories () {
+        return;
+        foreach (string panelName in inventoryPanels.Keys) {
+            GameObject panel = inventoryPanels[ panelName ];
+            /*for (int i = panel.transform.childCount; i > 0; --i ) {
+                GameObject slot = panel.transform.GetChild( i ).gameObject;
+                int x = int.Parse( slot.name[ 5 ].ToString() );
+                int y = int.Parse( slot.name[ 7 ].ToString() );
+                Inventory currentInventory = inventoryName[ panelName ];
+                if (currentInventory.virtualInventory[i, j])
+            }*/
+            Inventory currentInventory = inventoryName[ panelName ];
+
+            foreach (int key in currentInventory.itemPosition.Keys) {
+                InventoryPosition pos = currentInventory.itemPosition[ key ];
+                Item item = currentInventory.virtualInventory[ pos.x, pos.y ];
+                Sprite img = Resources.Load<Sprite>( "Items/" + item.id.ToString() );
+                if (img == null) {
+                    Debug.LogError( "Image doesn't exist : " + "Items/" + item.id.ToString() );
+                    continue;
+                }
+                GameObject itemImg = new GameObject(item.id.ToString() + "_" + pos.x + "_" + pos.y );
+                itemImg.transform.SetParent( panel.transform );
+                itemImg.transform.localPosition = new Vector3( pos.x * SIZE_SLOT, -pos.y * SIZE_SLOT, 0 );
+                itemImg.AddComponent<SpriteRenderer>().sprite = img;
+                itemImg.layer = 8;
             }
         }
-        #endregion
     }
     #endregion
 

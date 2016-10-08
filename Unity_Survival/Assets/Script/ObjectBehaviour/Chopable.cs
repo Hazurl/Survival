@@ -65,8 +65,8 @@ public class Chopable : MonoBehaviour, IDebuguable
         //At this point the three has been entirely chop, so play the animation and update drop list
         BreakThree();
         //Drop 1 to 3 Wood (maybe it should be a paremeter ?)
-//FIXME : We have to drop Item on the floor, not giving them to the character immediately
-        // items.Add(new Item(Item.ItemID.LOG, (uint)UnityEngine.Random.Range(1, 4)));
+        //FIXME : We have to drop Item on the floor, not giving them to the character immediately
+        items.Add( new Item( Item.ItemID.LOG, new Inventory.InventorySpace( 1, 1 ) ) );
 
         return true; //The three is dead
     }

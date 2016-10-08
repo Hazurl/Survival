@@ -30,7 +30,7 @@ public class Character : MonoBehaviour {
         offset = camTf.position - tf.position;
 
         //Initialize inventory, later we should initialize from a save
-        inventory = new Inventory(new Inventory.InventorySpace(INVENTORY_CAPACITY_X, INVENTORY_CAPACITY_Y)); 
+        inventory = new Inventory(new Inventory.InventorySpace(INVENTORY_CAPACITY_X, INVENTORY_CAPACITY_Y), null, true, "MyInventory"); 
     }
 
     void Update () {
@@ -45,8 +45,8 @@ public class Character : MonoBehaviour {
         Chop();
 
         //If 'E' KW is press, display the inventory
-        if (Input.GetKeyDown(KeyCode.I))
-            inventory.Display(Gloabl_GO.SlotsPanel);
+        if( Input.GetKeyDown( KeyCode.I ) )
+            Inventory.ToggleInventory();
     }
 
     /// <summary>

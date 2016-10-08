@@ -12,6 +12,7 @@ public class Inventory
     private Dictionary<int, InventoryPosition> itemPosition;
 
     public readonly InventorySpace inventorySpace;
+    public string name;
     #endregion
 
     #region Constante
@@ -29,7 +30,7 @@ public class Inventory
     /// </summary>
     /// <param name="Space">The inventorySpace of the inventory, this is a class from <see cref="Inventory.InventorySpace"/></param>
     /// <param name="inventory">The inventory copied in the current, it must be smaller or of the same size</param>
-    public Inventory (InventorySpace Space, Inventory inventory = null, bool showInventory = false, string name = "defaultName") {
+    public Inventory (InventorySpace Space, string name, Inventory inventory = null, bool showInventory = false) {
         //I don't want to have a negative array, an inventory must be more or equals than 1 * 1 array
         if( Space.x < 1 || Space.y < 1 ) throw new Exception( "Inventory can't have a negative space" );
 
@@ -37,6 +38,7 @@ public class Inventory
         this.inventorySpace = Space;
         virtualInventory = new Item[ Space.x, Space.y ];
         itemPosition = new Dictionary<int, InventoryPosition>( Space.Lenght );
+        this.name = name;
 
         if( inventory != null ) {
             //Add Some Start Item in the inventory
@@ -72,9 +74,26 @@ public class Inventory
 				virtualInventory[ i, j ] = item;
 
 		itemPosition[ item.uniqueId ] = pos;
-		//Debug.Log( "Add " + item.id.ToString() + " at position (" + pos.x.ToString() + ", " + pos.y.ToString() + ")" + 
-        //    " - Space (" + item.spaceRequired.x + ", " + item.spaceRequired.y+")");
-		return true;
+
+        //Create the sprite into the inventory Panel :
+        GameObject sprite = GameObject.Instantiate( Global.ItemSprite, inventoryPanels[ name ].transform ) as GameObject;
+
+        //Name
+        sprite.name = item.id.ToString() + "_" + pos.x + "_" + pos.y;
+
+        //Sprite
+        sprite.GetComponent<Image>().sprite = Resources.Load<Sprite>( "Items/" + item.id.ToString() );
+
+        RectTransform rect = sprite.GetComponent<RectTransform>();
+
+        //Position
+        rect.anchoredPosition = new Vector3( pos.x * SIZE_SLOT, -pos.y * SIZE_SLOT, 0 );
+
+        //Size
+        rect.SetSizeWithCurrentAnchors( RectTransform.Axis.Horizontal, SIZE_SLOT );
+        rect.SetSizeWithCurrentAnchors( RectTransform.Axis.Vertical, SIZE_SLOT );
+
+        return true;
 	}
 
 	/// <summary>
@@ -92,7 +111,18 @@ public class Inventory
 				virtualInventory[ i, j ] = null;
 
 		itemPosition.Remove( item.uniqueId );
-		return true;
+
+        //Remove the Sprite
+        GameObject curInv = inventoryPanels[ name ];
+        for(int i = curInv.transform.childCount - 1; i >= 0; --i ) {
+            Transform curChild = curInv.transform.GetChild( i );
+            if ( curChild.name == item.id.ToString() + "_" + pos.x + "_" + pos.y ) {
+                GameObject.Destroy( curChild.gameObject );
+                return true;
+            }
+        }
+
+        return true;
 	}
 
 	/// <summary>
@@ -106,11 +136,11 @@ public class Inventory
 		if( inventorySpace.x < space.x || inventorySpace.y < space.y )
 			return null;
 
-		for (int i = 0; i < inventorySpace.x - space.x + 1;  i++)
-			for (int j = 0; j < inventorySpace.y - space.y + 1;  j++) {
-				bool PosOk = true;
-                for( int _i = 0; _i < space.x; _i++ ) {
-                    for( int _j = 0; _j < space.y; _j++ ) {
+        for( int j = 0; j < inventorySpace.y - space.y + 1; j++ ) {
+            for( int i = 0; i < inventorySpace.x - space.x + 1; i++ ) {
+                bool PosOk = true;
+                for( int _j = 0; _j < space.y; _j++ ) {
+                    for( int _i = 0; _i < space.x; _i++ ) {
                         if( virtualInventory[ _i + i, _j + j ] != null ) {
                             PosOk = false;
                             j += _j;
@@ -119,10 +149,11 @@ public class Inventory
                     }
                     if( !PosOk ) break;
                 }
-                    
-				if( PosOk )
-					return new InventoryPosition( i, j );
-			}
+
+                if( PosOk )
+                    return new InventoryPosition( i, j );
+            }
+        }
         //if we are here, It's beacause there is no space for this Item
         Debug.LogError( "No Space for " + space.x + " : " + space.y );
 		return null;

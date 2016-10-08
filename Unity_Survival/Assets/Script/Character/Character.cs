@@ -31,7 +31,7 @@ public class Character : MonoBehaviour {
         offset = camTf.position - tf.position;
 
         //Initialize inventory, later we should initialize from a save
-        inventory = new Inventory(new Inventory.InventorySpace(INVENTORY_CAPACITY_X, INVENTORY_CAPACITY_Y), null, true, "MyInventory");
+        inventory = new Inventory( new Inventory.InventorySpace( INVENTORY_CAPACITY_X, INVENTORY_CAPACITY_Y ), "MyInventory", null, true );
     }
 
     void Update () {
@@ -48,6 +48,17 @@ public class Character : MonoBehaviour {
         //If 'E' KW is press, display the inventory
         if( Input.GetKeyDown( KeyCode.I ) )
             Inventory.ToggleInventory();
+
+        //Debug
+        if( Global.GodMod ) {
+            //Add a log in your inventory
+            if( Input.GetKeyDown( KeyCode.L ) )
+                inventory.AddItem( new Item( Item.ItemID.LOG, new Inventory.InventorySpace( 1, 1 ) ) );
+
+            //Destroy Random Item
+            if( Input.GetKeyDown( KeyCode.K ) )
+                inventory.RemoveItem( Item.getItemfromUniqueId( Random.Range( 0, 5 ) ) );
+        }
     }
 
     /// <summary>

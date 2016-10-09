@@ -78,11 +78,47 @@ public class InventoryControler : MonoBehaviour {
         panel.GetComponent<RectTransform>().anchoredPosition = Vector3.zero;
 
         OnAddingItem += (inventory, item, pos) => {
-            AddItem( inventory, item, pos );
+            //AddItem( inventory, item, pos );
+            if( !inventoryPanelRef.ContainsKey( inventory.name ) ) {
+                Debug.LogError( "Cannot add an item sprite, because the inventory (" + inventory.name + ") is not register." );
+                return;
+            }
+
+            //Create the sprite into the inventory Panel 
+            GameObject sprite = Instantiate( itemPrefab, inventoryPanelRef[ inventory.name ].transform ) as GameObject;
+
+            //Name
+            sprite.name = item.id.ToString() + "_" + pos.x + "_" + pos.y;
+
+            //Sprite
+            sprite.GetComponent<Image>().sprite = Resources.Load<Sprite>( "Items/" + item.id.ToString() );
+
+            RectTransform rect = sprite.GetComponent<RectTransform>();
+
+            //Position
+            rect.anchoredPosition = new Vector3( pos.x * SIZE_SLOT, -pos.y * SIZE_SLOT, 0 );
+
+            //Size
+            rect.SetSizeWithCurrentAnchors( RectTransform.Axis.Horizontal, SIZE_SLOT );
+            rect.SetSizeWithCurrentAnchors( RectTransform.Axis.Vertical, SIZE_SLOT );
         };
 
         OnRemovingItem += ( inventory, item, pos ) => {
-            RemoveItem( inventory, item, pos );
+            //RemoveItem( inventory, item, pos );
+            if( !inventoryPanelRef.ContainsKey( inventory.name ) ) {
+                Debug.LogError( "Cannot remove an item sprite, because the inventory (" + inventory.name + ") is not register." );
+                return;
+            }
+
+            //Remove the Sprite
+            Transform curInv = inventoryPanelRef[ inventory.name ].transform;
+            for( int i = curInv.childCount - 1; i >= 0; --i ) {
+                Transform curChild = curInv.GetChild( i );
+                if( curChild.name == item.id.ToString() + "_" + pos.x + "_" + pos.y ) {
+                    Destroy( curChild.gameObject );
+                    return;
+                }
+            }
         };
     }
 

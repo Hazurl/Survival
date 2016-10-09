@@ -76,7 +76,7 @@ public class Inventory
 		itemPosition[ item.uniqueId ] = pos;
 
         //Create the sprite into the inventory Panel :
-        GameObject sprite = GameObject.Instantiate( Global.ItemSprite, inventoryPanels[ name ].transform ) as GameObject;
+        GameObject sprite = GameObject.Instantiate( InventoryControler.instance.itemPrefab , inventoryPanels[ name ].transform ) as GameObject;
 
         //Name
         sprite.name = item.id.ToString() + "_" + pos.x + "_" + pos.y;
@@ -177,7 +177,7 @@ public class Inventory
         #endregion
         #region OnScreen 
         //The Panel which holding slots
-        GameObject panel = GameObject.Instantiate( Global.SlotsPanel, Global.InventoryPanel.transform ) as GameObject;
+        GameObject panel = GameObject.Instantiate( InventoryControler.instance.panelPrefab, InventoryControler.instance.targetPanel.transform ) as GameObject;
         panel.name = name;
         panel.transform.localRotation = Quaternion.identity;
 
@@ -185,7 +185,7 @@ public class Inventory
         for (int x = 0; x < inventorySpace.x; ++x ) {
             for (int y = 0; y < inventorySpace.y; ++y ) {
                 //Create the current Slot
-                GameObject slot = GameObject.Instantiate( Global.Slot, panel.transform ) as GameObject;
+                GameObject slot = GameObject.Instantiate( InventoryControler.instance.slotPrefab, panel.transform ) as GameObject;
                 RectTransform rectSlot = slot.GetComponent<RectTransform>();
 
                 //Change her Position
@@ -206,25 +206,9 @@ public class Inventory
     #endregion
 
     #region static
-    public static void DisplayInventory () {
-        UpdateInventories();
-        Global.InventoryPanel.SetActive( true );
-    }
-
-    public static void HideInventory() {
-        Global.InventoryPanel.SetActive( false );
-    }
-
-    public static void ToggleInventory () {
-        if ( !Global.InventoryPanel.activeSelf ) {
-            UpdateInventories();
-        }
-        Global.InventoryPanel.SetActive( !Global.InventoryPanel.activeSelf );
-    }
-
     private static void AddInventoryPanel (GameObject panel) {
         inventoryPanels.Add( panel.name, panel );
-        panel.transform.SetParent( Global.InventoryPanel.transform );
+        panel.transform.SetParent( InventoryControler.instance.targetPanel.transform );
         panel.GetComponent<RectTransform>().anchoredPosition = Vector3.zero;
     }
 
@@ -233,36 +217,6 @@ public class Inventory
 
         GameObject.Destroy( inventoryPanels[ name ] );
         inventoryPanels.Remove( name );
-    }
-
-    private static void UpdateInventories () {
-        return;
-        foreach (string panelName in inventoryPanels.Keys) {
-            GameObject panel = inventoryPanels[ panelName ];
-            /*for (int i = panel.transform.childCount; i > 0; --i ) {
-                GameObject slot = panel.transform.GetChild( i ).gameObject;
-                int x = int.Parse( slot.name[ 5 ].ToString() );
-                int y = int.Parse( slot.name[ 7 ].ToString() );
-                Inventory currentInventory = inventoryName[ panelName ];
-                if (currentInventory.virtualInventory[i, j])
-            }*/
-            Inventory currentInventory = inventoryName[ panelName ];
-
-            foreach (int key in currentInventory.itemPosition.Keys) {
-                InventoryPosition pos = currentInventory.itemPosition[ key ];
-                Item item = currentInventory.virtualInventory[ pos.x, pos.y ];
-                Sprite img = Resources.Load<Sprite>( "Items/" + item.id.ToString() );
-                if (img == null) {
-                    Debug.LogError( "Image doesn't exist : " + "Items/" + item.id.ToString() );
-                    continue;
-                }
-                GameObject itemImg = new GameObject(item.id.ToString() + "_" + pos.x + "_" + pos.y );
-                itemImg.transform.SetParent( panel.transform );
-                itemImg.transform.localPosition = new Vector3( pos.x * SIZE_SLOT, -pos.y * SIZE_SLOT, 0 );
-                itemImg.AddComponent<SpriteRenderer>().sprite = img;
-                itemImg.layer = 8;
-            }
-        }
     }
     #endregion
 

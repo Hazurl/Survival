@@ -47,7 +47,7 @@ public class Character : MonoBehaviour {
 
         //If 'E' KW is press, toggle the inventory
         if( Input.GetKeyDown( KeyCode.I ) )
-            Inventory.ToggleInventory();
+            InventoryControler.instance.ToggleInventory();
 
         //Debug
         if( Global.GodMod ) {

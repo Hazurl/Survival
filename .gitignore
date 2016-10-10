@@ -54,8 +54,11 @@ Script CDC.docx.meta
 *.sln
 *.csproj
 Temp/
+/Temp
 Library/
+/Library
 .vs/
+/.vs
 Unity_Survival/Library/metadata/
 *metadata*
 metadata

@@ -51,6 +51,8 @@ Script CDC.docx.meta
 *.meta
 *.info
 *.dll
+*.sln
+*.csproj
 Temp/
 Library/
 .vs/

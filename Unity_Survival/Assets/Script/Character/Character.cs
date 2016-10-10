@@ -8,7 +8,7 @@ public class Character : MonoBehaviour {
 
     //FIXME : The damage on a three can't be just an integer
     public const int CHOP_DAMAGE_PER_SECOND = 20;
-    public const float CHOP_DISTANCE = 20f;
+    public const float CHOP_DISTANCE = 30f;
     public const int INVENTORY_CAPACITY_X = 5 ,
                      INVENTORY_CAPACITY_Y = 5 ;
 
@@ -120,7 +120,7 @@ public class Character : MonoBehaviour {
                     Debug.DrawRay(tf.position, transform.TransformDirection(Vector3.forward), Color.red);
                     Chopable target = hit.collider.gameObject.GetComponent<Chopable>();
 
-                    if (target == null || target.isDead()) return;
+                    if (target == null || target.isDead() || (hit.collider.transform.position - tf.position).magnitude < CHOP_DISTANCE) return;
 
                     //Damage th three, get the drop list of items if he die, and finally updtae reload Time
                     List<Item> drop = new List<Item>();

@@ -7,13 +7,20 @@ using System;
 [RequireComponent(typeof(MeshRenderer))] //TODO : Mettre une anim à la place d'effacer le mesh
 public class Chopable : MonoBehaviour, IDebuguable
 {
+    [Header("Life :")]
+    [SerializeField]
+    private int maxLife = 100;
 
-    public int maxLife = 100;
+    [SerializeField]
     private int currentLife;
+
+    [Space(10)]
+    [Header("Part of the three growable")]
+    [SerializeField]
+    private MeshRenderer ThreeGrowable;
 
     private const float TIME_TO_GROW = 5; //2 minutes
     private float timeToGrow = 0;
-    private MeshRenderer ThreeGrowable;
 
     private new CapsuleCollider collider;
     private Vector3 POS_COLLIDER_CHOP = new Vector3(0, 20, 0);
@@ -57,22 +64,18 @@ public class Chopable : MonoBehaviour, IDebuguable
     public bool Chop(int dam, out List<Item> items)
     {
         items = new List<Item>();
-
-        currentLife -= dam;
-
-        if (currentLife > 0) return false; //The three is still alive
+        if( (currentLife -= dam) > 0) return false; //The three is still alive
 
         //At this point the three has been entirely chop, so play the animation and update drop list
         BreakThree();
         //Drop 1 to 3 Wood (maybe it should be a paremeter ?)
         //FIXME : We have to drop Item on the floor, not giving them to the character immediately
         items.Add( new Item( Item.ItemID.LOG, new Inventory.InventorySpace( 1, 1 ) ) );
-
         return true; //The three is dead
     }
 
     /// <summary>
-    /// Retourne true si l'Objet est mort (sa vie est inférieur à 0)
+    /// Retourne true si l'Objet est mort (si sa vie est inférieur à 0)
     /// </summary>
     /// <returns>Retourne true si l'Objet est mort</returns>
     public bool isDead()
@@ -94,7 +97,9 @@ public class Chopable : MonoBehaviour, IDebuguable
         //On bouge le collider
         collider.center = POS_COLLIDER_NOTCHOP;
     }
-    
+
+    #region IDebuguable
+
     /// <summary>
     /// Retourne la description de l'Objet
     /// </summary>
@@ -112,4 +117,6 @@ public class Chopable : MonoBehaviour, IDebuguable
     {
         return "Three";
     }
+
+    #endregion
 }

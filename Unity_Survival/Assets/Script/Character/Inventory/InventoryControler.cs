@@ -52,7 +52,6 @@ public class InventoryControler : MonoBehaviour {
 
         if( targetPanel.GetComponent<RectTransform>().rect.height > ACTIVE_SCROLLBAR_HEIGHT && targetPanel.activeInHierarchy ) {
             scrollBar.SetActive( true );
-            //scrollBar.GetComponent<Scrollbar>().size = 1;
         } else {
             scrollBar.SetActive( false );
         }

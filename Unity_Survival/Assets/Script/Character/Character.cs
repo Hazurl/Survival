@@ -32,6 +32,7 @@ public class Character : MonoBehaviour {
 
         //Initialize inventory, later we should initialize from a save
         inventory = new Inventory( new Inventory.InventorySpace( INVENTORY_CAPACITY_X, INVENTORY_CAPACITY_Y ), "MyInventory", null, true );
+        //inventory = new Inventory( new Inventory.InventorySpace( 4, 4 ), "other", null, true );
     }
 
     void Update () {

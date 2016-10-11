@@ -1,27 +1,33 @@
 ﻿using UnityEngine;
-using System;
 using System.Collections.Generic;
 using UnityEngine.UI;
+using System;
 
 public class Inventory
 {
     #region Attributs
     //This is the display Inventory
-    private Item[, ] virtualInventory;
+    public Item[, ] virtualInventory { get; private set; }
     //The List of Item in the inventory, because a Item can take more than one space
     private Dictionary<int, InventoryPosition> itemPosition;
 
     public readonly InventorySpace inventorySpace;
     public string name;
+
+    //OnItemChange
+    Action<Inventory, Item, InventoryPosition> OnAddingItem;
+    Action<Inventory, Item, InventoryPosition> OnRemovingItem;
+
     #endregion
 
     #region Constante
-    private const int SIZE_SLOT = 50;
     #endregion
 
     #region staticAttributs
     private static Dictionary<string, GameObject> inventoryPanels = new Dictionary<string, GameObject>();
     private static Dictionary<string, Inventory> inventoryName = new Dictionary<string, Inventory>();
+
+    public InventoryControler Controler = InventoryControler.instance;
     #endregion
 
     #region Constructors
@@ -32,7 +38,7 @@ public class Inventory
     /// <param name="inventory">The inventory copied in the current, it must be smaller or of the same size</param>
     public Inventory (InventorySpace Space, string name, Inventory inventory = null, bool showInventory = false) {
         //I don't want to have a negative array, an inventory must be more or equals than 1 * 1 array
-        if( Space.x < 1 || Space.y < 1 ) throw new Exception( "Inventory can't have a negative space" );
+        if( Space.x < 1 || Space.y < 1 ) throw new System.Exception( "Inventory can't have negative or null space" );
 
         //Initialize Attribut
         this.inventorySpace = Space;
@@ -52,7 +58,7 @@ public class Inventory
 
         //Add Inventory into the inventory Panel
         if( !showInventory ) return;
-        AddInventoryPanel( CreateInventoryPanel(name) );
+        Controler.AddInventoryPanel( Controler.CreatePanel( name, this ), ref OnAddingItem, ref OnRemovingItem );
         inventoryName.Add( name, this );
     }
 	#endregion
@@ -75,24 +81,7 @@ public class Inventory
 
 		itemPosition[ item.uniqueId ] = pos;
 
-        //Create the sprite into the inventory Panel :
-        GameObject sprite = GameObject.Instantiate( Global.ItemSprite, inventoryPanels[ name ].transform ) as GameObject;
-
-        //Name
-        sprite.name = item.id.ToString() + "_" + pos.x + "_" + pos.y;
-
-        //Sprite
-        sprite.GetComponent<Image>().sprite = Resources.Load<Sprite>( "Items/" + item.id.ToString() );
-
-        RectTransform rect = sprite.GetComponent<RectTransform>();
-
-        //Position
-        rect.anchoredPosition = new Vector3( pos.x * SIZE_SLOT, -pos.y * SIZE_SLOT, 0 );
-
-        //Size
-        rect.SetSizeWithCurrentAnchors( RectTransform.Axis.Horizontal, SIZE_SLOT );
-        rect.SetSizeWithCurrentAnchors( RectTransform.Axis.Vertical, SIZE_SLOT );
-
+        OnAddingItem( this, item, pos );
         return true;
 	}
 
@@ -112,16 +101,7 @@ public class Inventory
 
 		itemPosition.Remove( item.uniqueId );
 
-        //Remove the Sprite
-        GameObject curInv = inventoryPanels[ name ];
-        for(int i = curInv.transform.childCount - 1; i >= 0; --i ) {
-            Transform curChild = curInv.transform.GetChild( i );
-            if ( curChild.name == item.id.ToString() + "_" + pos.x + "_" + pos.y ) {
-                GameObject.Destroy( curChild.gameObject );
-                return true;
-            }
-        }
-
+        OnRemovingItem( this, item, pos );
         return true;
 	}
 
@@ -158,112 +138,6 @@ public class Inventory
         Debug.LogError( "No Space for " + space.x + " : " + space.y );
 		return null;
 	}
-
-    /// <summary>
-    /// Display On screen The inventory
-    /// </summary>
-	public GameObject CreateInventoryPanel (string name) {
-        #region Debug.Log
-        string text = "Inventory : \n";
-		for( int i = 0; i < inventorySpace.x; i++ ) {
-			for( int j = 0; j < inventorySpace.y; j++ )
-				if( virtualInventory[ i, j ] == null )
-					text += '▮';
-				else
-					text += virtualInventory[i, j].uniqueId;
-			text += '\n';
-		}
-		Debug.Log( text );
-        #endregion
-        #region OnScreen 
-        //The Panel which holding slots
-        GameObject panel = GameObject.Instantiate( Global.SlotsPanel, Global.InventoryPanel.transform ) as GameObject;
-        panel.name = name;
-        panel.transform.localRotation = Quaternion.identity;
-
-        //Slots        
-        for (int x = 0; x < inventorySpace.x; ++x ) {
-            for (int y = 0; y < inventorySpace.y; ++y ) {
-                //Create the current Slot
-                GameObject slot = GameObject.Instantiate( Global.Slot, panel.transform ) as GameObject;
-                RectTransform rectSlot = slot.GetComponent<RectTransform>();
-
-                //Change her Position
-                rectSlot.anchoredPosition = new Vector3( SIZE_SLOT * x, -SIZE_SLOT * y, 0 );
-
-                //Change Size
-                rectSlot.SetSizeWithCurrentAnchors( RectTransform.Axis.Horizontal, SIZE_SLOT );
-                rectSlot.SetSizeWithCurrentAnchors( RectTransform.Axis.Vertical, SIZE_SLOT );
-
-                //Update the name just to have a nice hierarchy
-                slot.name = "Slot_" + x + "_" + y;
-           } 
-        }
-
-        return panel;
-        #endregion
-    }
-    #endregion
-
-    #region static
-    public static void DisplayInventory () {
-        UpdateInventories();
-        Global.InventoryPanel.SetActive( true );
-    }
-
-    public static void HideInventory() {
-        Global.InventoryPanel.SetActive( false );
-    }
-
-    public static void ToggleInventory () {
-        if ( !Global.InventoryPanel.activeSelf ) {
-            UpdateInventories();
-        }
-        Global.InventoryPanel.SetActive( !Global.InventoryPanel.activeSelf );
-    }
-
-    private static void AddInventoryPanel (GameObject panel) {
-        inventoryPanels.Add( panel.name, panel );
-        panel.transform.SetParent( Global.InventoryPanel.transform );
-        panel.GetComponent<RectTransform>().anchoredPosition = Vector3.zero;
-    }
-
-    private static void RemoveInventoryPanel( string name ) {
-        if( !inventoryPanels.ContainsKey( name ) ) return;
-
-        GameObject.Destroy( inventoryPanels[ name ] );
-        inventoryPanels.Remove( name );
-    }
-
-    private static void UpdateInventories () {
-        return;
-        foreach (string panelName in inventoryPanels.Keys) {
-            GameObject panel = inventoryPanels[ panelName ];
-            /*for (int i = panel.transform.childCount; i > 0; --i ) {
-                GameObject slot = panel.transform.GetChild( i ).gameObject;
-                int x = int.Parse( slot.name[ 5 ].ToString() );
-                int y = int.Parse( slot.name[ 7 ].ToString() );
-                Inventory currentInventory = inventoryName[ panelName ];
-                if (currentInventory.virtualInventory[i, j])
-            }*/
-            Inventory currentInventory = inventoryName[ panelName ];
-
-            foreach (int key in currentInventory.itemPosition.Keys) {
-                InventoryPosition pos = currentInventory.itemPosition[ key ];
-                Item item = currentInventory.virtualInventory[ pos.x, pos.y ];
-                Sprite img = Resources.Load<Sprite>( "Items/" + item.id.ToString() );
-                if (img == null) {
-                    Debug.LogError( "Image doesn't exist : " + "Items/" + item.id.ToString() );
-                    continue;
-                }
-                GameObject itemImg = new GameObject(item.id.ToString() + "_" + pos.x + "_" + pos.y );
-                itemImg.transform.SetParent( panel.transform );
-                itemImg.transform.localPosition = new Vector3( pos.x * SIZE_SLOT, -pos.y * SIZE_SLOT, 0 );
-                itemImg.AddComponent<SpriteRenderer>().sprite = img;
-                itemImg.layer = 8;
-            }
-        }
-    }
     #endregion
 
     #region Structures
@@ -290,7 +164,7 @@ public class Inventory
 	/// A Class to represent a position in an inventory
 	/// <para>Not a structure beacause can be null</para>
 	/// </summary>
-	private class InventoryPosition {
+	public class InventoryPosition {
 		#region Attributs
 		public readonly int x, y;
 		#endregion

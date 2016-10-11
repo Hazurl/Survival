@@ -13,7 +13,7 @@ public class Character : MonoBehaviour {
     public float CHOP_DISTANCE = 30f;
     [SerializeField]
     public int INVENTORY_CAPACITY_X = 5 ,
-                     INVENTORY_CAPACITY_Y = 5 ;
+               INVENTORY_CAPACITY_Y = 5 ;
 
     //Reload Time
     [SerializeField]

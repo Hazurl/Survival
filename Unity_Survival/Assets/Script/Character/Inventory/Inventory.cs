@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using System;
 
+[System.Serializable]
 public class Inventory
 {
+    #region LastVersion
+    /*
     #region Attributs
     //This is the display Inventory
     public Item[, ] virtualInventory { get; private set; }
@@ -170,5 +173,11 @@ public class Inventory
 		#endregion
 	}
 
-	#endregion
+    #endregion
+    */
+    #endregion
+
+    //Liste des items dans l'inventaire
+    List<Item> Items;
+
 }

@@ -2,10 +2,13 @@
 using System;
 using UnityEngine;
 
+[System.Serializable]
 public class Item
 {
-	#region static
-	private static int UniqueId = 0;
+    #region Last Version
+    /*
+    #region static
+    private static int UniqueId = 0;
 	private static List<Item> ItemUniqueId = new List<Item>();
 
 	public static Item getItemfromUniqueId (int _uniqueId) {
@@ -59,6 +62,51 @@ public class Item
     public enum ItemID { 
         INVALID = 0,
         LOG = 1
+    }
+    #endregion
+    */
+    #endregion
+
+    public Rect rect;
+    public Itemdata data;
+
+    // Easy Accessor
+    public float X {
+        get {
+            return rect.x;
+        }
+    }
+    public float Y {
+        get {
+            return rect.y;
+        }
+    }
+    public float Width {
+        get {
+            return rect.width;
+        }
+    }
+    public float Height {
+        get {
+            return rect.height;
+        }
+    }
+
+
+    #region Constructor
+    public Item (Rect _rect, Itemdata _data ) {
+        rect = _rect;
+        data = _data;
+    }
+
+    public Item (float _x, float _y, float _w, float _h, Itemdata _data) {
+        rect = new Rect( _x, _y, _w, _h );
+        data = _data;
+    }
+
+    public Item( Vector2 _position, Vector2 _size, Itemdata _data ) {
+        rect = new Rect( _position, _size );
+        data = _data;
     }
     #endregion
 }

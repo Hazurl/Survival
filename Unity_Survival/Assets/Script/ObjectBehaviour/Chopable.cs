@@ -19,10 +19,11 @@ public class Chopable : MonoBehaviour, IDebuguable
     [SerializeField]
     private MeshRenderer ThreeGrowable;
 
-    private const float TIME_TO_GROW = 5; //2 minutes
+    [SerializeField]
+    private float TIME_TO_GROW = 5; //2 minutes
     private float timeToGrow = 0;
 
-    private new CapsuleCollider collider;
+    private CapsuleCollider colliderBase;
     private Vector3 POS_COLLIDER_CHOP = new Vector3(0, 20, 0);
     private Vector3 POS_COLLIDER_NOTCHOP = new Vector3(0, -18, 0);
 
@@ -30,7 +31,7 @@ public class Chopable : MonoBehaviour, IDebuguable
     void Start()
     {
         currentLife = maxLife;
-        collider = GetComponent<CapsuleCollider>();
+        colliderBase = GetComponent<CapsuleCollider>();
         foreach (var child in gameObject.GetComponentsInChildren<Transform>())
             if (child.name == "Arbre")
             {
@@ -49,7 +50,7 @@ public class Chopable : MonoBehaviour, IDebuguable
             {
                 ThreeGrowable.enabled = true;
                 currentLife = maxLife;
-                collider.center = POS_COLLIDER_CHOP;
+                colliderBase.center = POS_COLLIDER_CHOP;
             }
         }
 
@@ -58,19 +59,19 @@ public class Chopable : MonoBehaviour, IDebuguable
     /// <summary>
     /// Fait prendre des dégâts à l'Objet
     /// </summary>
-    /// <param name="dam">Le nombre de dégâts</param>
-    /// <param name="items">La liste des items droppables si l'Objet en drop</param>
+    /// <param name="_dam">Le nombre de dégâts</param>
+    /// <param name="_items">La liste des items droppables si l'Objet en drop</param>
     /// <returns>True si L'objet drop des items</returns>
-    public bool Chop(int dam, out List<Item> items)
+    public bool Chop(int _dam, out List<Item> _items)
     {
-        items = new List<Item>();
-        if( (currentLife -= dam) > 0) return false; //The three is still alive
+        _items = new List<Item>();
+        if( (currentLife -= _dam) > 0) return false; //The three is still alive
 
         //At this point the three has been entirely chop, so play the animation and update drop list
         BreakThree();
         //Drop 1 to 3 Wood (maybe it should be a paremeter ?)
         //FIXME : We have to drop Item on the floor, not giving them to the character immediately
-        items.Add( new Item( Item.ItemID.LOG, new Inventory.InventorySpace( 1, 1 ) ) );
+        _items.Add( new Item( Item.ItemID.LOG, new Inventory.InventorySpace( 1, 1 ) ) );
         return true; //The three is dead
     }
 
@@ -95,7 +96,7 @@ public class Chopable : MonoBehaviour, IDebuguable
         timeToGrow = TIME_TO_GROW;
 
         //On bouge le collider
-        collider.center = POS_COLLIDER_NOTCHOP;
+        colliderBase.center = POS_COLLIDER_NOTCHOP;
     }
 
     #region IDebuguable

@@ -8,19 +8,19 @@ public class Text_with_IDebugable : MonoBehaviour {
     public Camera cam;
 	
 	void Update () {
-        Ray ray = cam.ScreenPointToRay(Input.mousePosition);
-        RaycastHit hit;
-        if (Physics.Raycast(ray, out hit))
+        Ray _ray = cam.ScreenPointToRay(Input.mousePosition);
+        RaycastHit _hit;
+        if (Physics.Raycast(_ray, out _hit))
         {
-            IDebuguable debugGameObject = hit.collider.gameObject.GetComponent<IDebuguable>();
-            if (debugGameObject == null)
+            IDebuguable _debugGameObject = _hit.collider.gameObject.GetComponent<IDebuguable>();
+            if (_debugGameObject == null)
             {
                 text.text = "null";
                 return;
             }
             else
             {
-                text.text = debugGameObject.getName() + " : " + debugGameObject.getDescription();
+                text.text = _debugGameObject.getName() + " : " + _debugGameObject.getDescription();
             }
         }
     }

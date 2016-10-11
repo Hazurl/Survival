@@ -4,32 +4,18 @@ using UnityEngine.UI;
 public class Global : MonoBehaviour {
 
     #region staticAttributs
-    public bool _GodMod;
-    public static bool GodMod;
+    [SerializeField]
+    public bool GodMod { get; private set; }
     #endregion
 
-    #region staticPrefabs
-    public GameObject _InventoryPanel;
-    public static GameObject InventoryPanel { get; private set; }
-
-    public GameObject _SlotsPanel;
-    public static GameObject SlotsPanel { get; private set; }
-
-    public GameObject _Slot;
-    public static GameObject Slot { get; private set; }
-
-    public GameObject _ItemSprite;
-    public static GameObject ItemSprite { get; private set; }
-    #endregion
-
-    void Awake () {
-        //Prefabs
-        SlotsPanel = _SlotsPanel;
-        Slot = _Slot;
-        InventoryPanel = _InventoryPanel;
-        ItemSprite = _ItemSprite;
-
-        //Attributs
-        GodMod = _GodMod;
+    #region InventoryControlerInstance
+    public static Global instance;
+    void Awake() {
+        if( instance != null ) {
+            Debug.LogError( "There is more than 1 instance of Global !" );
+            return;
+        }
+        instance = this;
     }
+    #endregion
 }

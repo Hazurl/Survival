@@ -4,16 +4,20 @@ using System.Collections.Generic;
 public class Character : MonoBehaviour {
 
     //The camera following this character
-    public Camera cam;
+    [SerializeField]
+    private Camera cam;
 
     //FIXME : The damage on a three can't be just an integer
     public const int CHOP_DAMAGE_PER_SECOND = 20;
-    public const float CHOP_DISTANCE = 30f;
-    public const int INVENTORY_CAPACITY_X = 5 ,
+    [SerializeField]
+    public float CHOP_DISTANCE = 30f;
+    [SerializeField]
+    public int INVENTORY_CAPACITY_X = 5 ,
                      INVENTORY_CAPACITY_Y = 5 ;
 
     //Reload Time
-    public const float RELOAD_TIME = 0.5f; //0.5 secondes
+    [SerializeField]
+    private float RELOAD_TIME = 0.5f; //0.5 secondes
     private float TimeToReload = 0;
 
     //Transform
@@ -45,12 +49,12 @@ public class Character : MonoBehaviour {
         //Choping
         Chop();
 
-        //If 'E' KW is press, toggle the inventory
+        //If 'I' KW is press, toggle the inventory
         if( Input.GetKeyDown( KeyCode.I ) )
             InventoryControler.instance.ToggleInventory();
 
         //Debug
-        if( Global.GodMod ) {
+        if( Global.instance.GodMod) {
             //Add a log in your inventory
             if( Input.GetKeyDown( KeyCode.L ) )
                 inventory.AddItem( new Item( Item.ItemID.LOG, new Inventory.InventorySpace( 1, 1 ) ) );
@@ -94,13 +98,13 @@ public class Character : MonoBehaviour {
     /// </summary>
     void SetLookRotation ()
     {
-        Ray ray = cam.ScreenPointToRay(Input.mousePosition);
-        RaycastHit hit;
-        if (Physics.Raycast(ray, out hit))
+        Ray _ray = cam.ScreenPointToRay(Input.mousePosition);
+        RaycastHit _hit;
+        if (Physics.Raycast(_ray, out _hit))
         {
-            Quaternion rot = Quaternion.LookRotation(hit.point - tf.position);
-            rot.x = 0; rot.z = 0;
-            tf.rotation = rot;
+            Quaternion _rot = Quaternion.LookRotation(_hit.point - tf.position);
+            _rot.x = 0; _rot.z = 0;
+            tf.rotation = _rot;
         }
     }
 
@@ -114,24 +118,24 @@ public class Character : MonoBehaviour {
         {
             if (Input.GetMouseButton(0)) //left button
             {
-                RaycastHit hit;
-                if (Physics.Raycast(tf.position, transform.TransformDirection(Vector3.forward), out hit, CHOP_DISTANCE))
+                RaycastHit _hit;
+                if (Physics.Raycast(tf.position, transform.TransformDirection(Vector3.forward), out _hit, CHOP_DISTANCE))
                 {
                     Debug.DrawRay(tf.position, transform.TransformDirection(Vector3.forward), Color.red);
-                    Chopable target = hit.collider.gameObject.GetComponent<Chopable>();
+                    Chopable _target = _hit.collider.gameObject.GetComponent<Chopable>();
 
-                    if (target == null || target.isDead() || (hit.collider.transform.position - tf.position).magnitude < CHOP_DISTANCE) return;
+                    if (_target == null || _target.isDead() || (_hit.collider.transform.position - tf.position).magnitude < CHOP_DISTANCE) return;
 
                     //Damage th three, get the drop list of items if he die, and finally updtae reload Time
-                    List<Item> drop = new List<Item>();
-                    if (target.Chop(CHOP_DAMAGE_PER_SECOND, out drop))
+                    List<Item> _drop = new List<Item>();
+                    if (_target.Chop(CHOP_DAMAGE_PER_SECOND, out _drop))
                     {
                         Debug.Log("A three has been chop");
-                        List<Item> _drop = new List<Item>(drop);
-                        foreach( Item item in drop )
-                            if( inventory.AddItem( item ) ) _drop.Remove( item );
+                        List<Item> _dropOverflow = new List<Item>( _drop );
+                        foreach( Item item in _dropOverflow )
+                            if( inventory.AddItem( item ) ) _dropOverflow.Remove( item );
 
-                        if (_drop.Count > 0) Debug.Log("Inventory Overflow");
+                        if (_dropOverflow.Count > 0) Debug.Log("Inventory Overflow");
                     }
 
                     TimeToReload = RELOAD_TIME;

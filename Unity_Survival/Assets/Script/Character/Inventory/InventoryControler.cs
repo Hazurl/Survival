@@ -49,6 +49,14 @@ public class InventoryControler : MonoBehaviour {
             return;
         targetPanel.SetActive( true );
         isHide = true;
+
+        if( targetPanel.GetComponent<RectTransform>().rect.height > ACTIVE_SCROLLBAR_HEIGHT && targetPanel.activeInHierarchy ) {
+            scrollBar.SetActive( true );
+            //scrollBar.GetComponent<Scrollbar>().size = 1;
+        } else {
+            scrollBar.SetActive( false );
+        }
+
     }
 
     public void ShowInventory() {
@@ -56,6 +64,14 @@ public class InventoryControler : MonoBehaviour {
             return;
         targetPanel.SetActive( false );
         isHide = false;
+
+        if( targetPanel.GetComponent<RectTransform>().rect.height > ACTIVE_SCROLLBAR_HEIGHT && targetPanel.activeInHierarchy ) {
+            scrollBar.SetActive( true );
+            scrollBar.GetComponent<Scrollbar>().size = 1;
+        } else {
+            scrollBar.SetActive( false );
+        }
+
     }
 
     public void ToggleInventory() {
@@ -69,14 +85,25 @@ public class InventoryControler : MonoBehaviour {
 
     #region Inventory Panel Controler
     private Dictionary<string, GameObject> inventoryPanelRef = new Dictionary<string, GameObject>();
+    private Vector2 offset = Vector3.zero;
 
-    private const int SIZE_SLOT = 50;
+    #region Constante
+    [ Space(10)]
+    [Header("Constante pour graphique :")]
+    [SerializeField]
+    private int SIZE_SLOT = 50;
+    [SerializeField]
+    private int SPACE_BETWEEN_PANEL = 50;
+    [SerializeField]
+    private Vector2 POS_DEFAULT_PANEL = Vector2.zero;
+    [SerializeField]
+    private int ACTIVE_SCROLLBAR_HEIGHT = 300;
+    #endregion
 
     public void AddInventoryPanel ( GameObject panel, ref Action<Inventory, Item, Inventory.InventoryPosition> OnAddingItem, ref Action<Inventory, Item, Inventory.InventoryPosition> OnRemovingItem ) {
         inventoryPanelRef.Add( panel.name, panel );
-        panel.transform.SetParent( targetPanel.transform );
-        panel.GetComponent<RectTransform>().anchoredPosition = Vector3.zero;
 
+        //Callback
         OnAddingItem += (inventory, item, pos) => {
             //AddItem( inventory, item, pos );
             if( !inventoryPanelRef.ContainsKey( inventory.name ) ) {
@@ -102,7 +129,6 @@ public class InventoryControler : MonoBehaviour {
             rect.SetSizeWithCurrentAnchors( RectTransform.Axis.Horizontal, SIZE_SLOT );
             rect.SetSizeWithCurrentAnchors( RectTransform.Axis.Vertical, SIZE_SLOT );
         };
-
         OnRemovingItem += ( inventory, item, pos ) => {
             //RemoveItem( inventory, item, pos );
             if( !inventoryPanelRef.ContainsKey( inventory.name ) ) {
@@ -125,7 +151,7 @@ public class InventoryControler : MonoBehaviour {
     public void RemoveInventoryPanel( GameObject panel ) {
         if( !inventoryPanelRef.ContainsKey( name ) ) return;
 
-        GameObject.Destroy( inventoryPanelRef[ name ] );
+        Destroy( inventoryPanelRef[ name ] );
         inventoryPanelRef.Remove( name );
     }
 
@@ -152,6 +178,21 @@ public class InventoryControler : MonoBehaviour {
         GameObject panel = Instantiate( panelPrefab, targetPanel.transform ) as GameObject;
         panel.name = nameIdentifier;
         panel.transform.localRotation = Quaternion.identity;
+        panel.GetComponent<RectTransform>().anchoredPosition = POS_DEFAULT_PANEL + offset;
+
+        //Update offset
+        offset.y -= SPACE_BETWEEN_PANEL + invSpace.y * SIZE_SLOT;
+
+        //Update targetPanel height
+        targetPanel.GetComponent<RectTransform>().sizeDelta = new Vector2( 0, -offset.y - SPACE_BETWEEN_PANEL );
+
+        //Update Scrollbar
+        if( targetPanel.GetComponent<RectTransform>().rect.height > ACTIVE_SCROLLBAR_HEIGHT && targetPanel.activeInHierarchy) {
+            scrollBar.SetActive( true );
+        }
+        else {
+            scrollBar.SetActive( false );
+        }
 
         //Slots        
         for( int x = 0; x < invSpace.x; ++x ) {

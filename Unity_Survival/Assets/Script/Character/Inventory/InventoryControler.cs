@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System;
 using UnityEngine.UI;
+
 [DisallowMultipleComponent]
 public class InventoryControler : MonoBehaviour {
 
@@ -99,88 +100,87 @@ public class InventoryControler : MonoBehaviour {
     private int ACTIVE_SCROLLBAR_HEIGHT = 300;
     #endregion
 
-    public void AddInventoryPanel ( GameObject panel, ref Action<Inventory, Item, Inventory.InventoryPosition> OnAddingItem, ref Action<Inventory, Item, Inventory.InventoryPosition> OnRemovingItem ) {
-        inventoryPanelRef.Add( panel.name, panel );
+    public void AddInventoryPanel ( GameObject _panel, ref Action<Inventory, Item, Inventory.InventoryPosition> _OnAddingItem, ref Action<Inventory, Item, Inventory.InventoryPosition> _OnRemovingItem ) {
+        inventoryPanelRef.Add( _panel.name, _panel );
 
         //Callback
-        OnAddingItem += (inventory, item, pos) => {
-            //AddItem( inventory, item, pos );
-            if( !inventoryPanelRef.ContainsKey( inventory.name ) ) {
-                Debug.LogError( "Cannot add an item sprite, because the inventory (" + inventory.name + ") is not register." );
+        _OnAddingItem += (_inventory, _item, _pos) => {
+            if( !inventoryPanelRef.ContainsKey( _inventory.name ) ) {
+                Debug.LogError( "Cannot add an item sprite, because the inventory (" + _inventory.name + ") is not register." );
                 return;
             }
 
             //Create the sprite into the inventory Panel 
-            GameObject sprite = Instantiate( itemPrefab, inventoryPanelRef[ inventory.name ].transform ) as GameObject;
+            GameObject _sprite = Instantiate( itemPrefab, inventoryPanelRef[ _inventory.name ].transform ) as GameObject;
 
             //Name
-            sprite.name = item.id.ToString() + "_" + pos.x + "_" + pos.y;
+            _sprite.name = _item.id.ToString() + "_" + _pos.x + "_" + _pos.y;
 
             //Sprite
-            sprite.GetComponent<Image>().sprite = Resources.Load<Sprite>( "Items/" + item.id.ToString() );
+            _sprite.GetComponent<Image>().sprite = Resources.Load<Sprite>( "Items/" + _item.id.ToString() );
 
-            RectTransform rect = sprite.GetComponent<RectTransform>();
+            RectTransform _rect = _sprite.GetComponent<RectTransform>();
 
             //Position
-            rect.anchoredPosition = new Vector3( pos.x * SIZE_SLOT, -pos.y * SIZE_SLOT, 0 );
+            _rect.anchoredPosition = new Vector3( _pos.x * SIZE_SLOT, -_pos.y * SIZE_SLOT, 0 );
 
             //Size
-            rect.SetSizeWithCurrentAnchors( RectTransform.Axis.Horizontal, SIZE_SLOT );
-            rect.SetSizeWithCurrentAnchors( RectTransform.Axis.Vertical, SIZE_SLOT );
+            _rect.SetSizeWithCurrentAnchors( RectTransform.Axis.Horizontal, SIZE_SLOT );
+            _rect.SetSizeWithCurrentAnchors( RectTransform.Axis.Vertical, SIZE_SLOT );
         };
-        OnRemovingItem += ( inventory, item, pos ) => {
+        _OnRemovingItem += ( _inventory, _item, _pos ) => {
             //RemoveItem( inventory, item, pos );
-            if( !inventoryPanelRef.ContainsKey( inventory.name ) ) {
-                Debug.LogError( "Cannot remove an item sprite, because the inventory (" + inventory.name + ") is not register." );
+            if( !inventoryPanelRef.ContainsKey( _inventory.name ) ) {
+                Debug.LogError( "Cannot remove an item sprite, because the inventory (" + _inventory.name + ") is not register." );
                 return;
             }
 
             //Remove the Sprite
-            Transform curInv = inventoryPanelRef[ inventory.name ].transform;
-            for( int i = curInv.childCount - 1; i >= 0; --i ) {
-                Transform curChild = curInv.GetChild( i );
-                if( curChild.name == item.id.ToString() + "_" + pos.x + "_" + pos.y ) {
-                    Destroy( curChild.gameObject );
+            Transform _curInv = inventoryPanelRef[ _inventory.name ].transform;
+            for( int _indexChild = _curInv.childCount - 1; _indexChild >= 0; --_indexChild ) {
+                Transform _curChild = _curInv.GetChild( _indexChild );
+                if( _curChild.name == _item.id.ToString() + "_" + _pos.x + "_" + _pos.y ) {
+                    Destroy( _curChild.gameObject );
                     return;
                 }
             }
         };
     }
 
-    public void RemoveInventoryPanel( GameObject panel ) {
-        if( !inventoryPanelRef.ContainsKey( name ) ) return;
+    public void RemoveInventoryPanel( GameObject _panel ) {
+        if( !inventoryPanelRef.ContainsKey( _panel.name ) ) return;
 
-        Destroy( inventoryPanelRef[ name ] );
-        inventoryPanelRef.Remove( name );
+        Destroy( inventoryPanelRef[ _panel.name ] );
+        inventoryPanelRef.Remove( _panel.name );
     }
 
-    public GameObject CreatePanel( string nameIdentifier, Inventory inventory, bool DisplayOnDebugLog = false) {
-        Inventory.InventorySpace invSpace = inventory.inventorySpace;
-        Item[,] virtualInv = inventory.virtualInventory;
+    public GameObject CreatePanel( string _nameIdentifier, Inventory _inventory, bool _DisplayOnDebugLog = false) {
+        Inventory.InventorySpace _invSpace = _inventory.inventorySpace;
+        Item[,] _virtualInv = _inventory.virtualInventory;
 
-        #region Display On Debug.Log
-        if( DisplayOnDebugLog ) {
-            string text = "Inventory : \n";
-            for( int i = 0; i < invSpace.x; i++ ) {
-                for( int j = 0; j < invSpace.y; j++ )
-                    if( virtualInv[ i, j ] == null )
-                        text += '▮';
+        if( _DisplayOnDebugLog ) {
+            #region Display On Debug.Log
+            string _text = "Inventory : \n";
+            for( int _x = 0; _x < _invSpace.x; _x++ ) {
+                for( int _y = 0; _y < _invSpace.y; _y++ )
+                    if( _virtualInv[ _x, _y ] == null )
+                        _text += '▮';
                     else
-                        text += virtualInv[ i, j ].uniqueId;
-                text += '\n';
+                        _text += _virtualInv[ _x, _y ].uniqueId;
+                _text += '\n';
             }
-            Debug.Log( text );
+            Debug.Log( _text );
+            #endregion
         }
-        #endregion
 
         //The Panel which holding slots
-        GameObject panel = Instantiate( panelPrefab, targetPanel.transform ) as GameObject;
-        panel.name = nameIdentifier;
-        panel.transform.localRotation = Quaternion.identity;
-        panel.GetComponent<RectTransform>().anchoredPosition = POS_DEFAULT_PANEL + offset;
+        GameObject _panel = Instantiate( panelPrefab, targetPanel.transform ) as GameObject;
+        _panel.name = _nameIdentifier;
+        _panel.transform.localRotation = Quaternion.identity;
+        _panel.GetComponent<RectTransform>().anchoredPosition = POS_DEFAULT_PANEL + offset;
 
         //Update offset
-        offset.y -= SPACE_BETWEEN_PANEL + invSpace.y * SIZE_SLOT;
+        offset.y -= SPACE_BETWEEN_PANEL + _invSpace.y * SIZE_SLOT;
 
         //Update targetPanel height
         targetPanel.GetComponent<RectTransform>().sizeDelta = new Vector2( 0, -offset.y - SPACE_BETWEEN_PANEL );
@@ -194,70 +194,26 @@ public class InventoryControler : MonoBehaviour {
         }
 
         //Slots        
-        for( int x = 0; x < invSpace.x; ++x ) {
-            for( int y = 0; y < invSpace.y; ++y ) {
+        for( int _x = 0; _x < _invSpace.x; ++_x ) {
+            for( int _y = 0; _y < _invSpace.y; ++_y ) {
                 //Create the current Slot
-                GameObject slot = Instantiate( slotPrefab, panel.transform ) as GameObject;
-                RectTransform rectSlot = slot.GetComponent<RectTransform>();
+                GameObject _slot = Instantiate( slotPrefab, _panel.transform ) as GameObject;
+                RectTransform _rectSlot = _slot.GetComponent<RectTransform>();
 
                 //Change her Position
-                rectSlot.anchoredPosition = new Vector3( SIZE_SLOT * x, -SIZE_SLOT * y, 0 );
+                _rectSlot.anchoredPosition = new Vector3( SIZE_SLOT * _x, -SIZE_SLOT * _y, 0 );
 
                 //Change Size
-                rectSlot.SetSizeWithCurrentAnchors( RectTransform.Axis.Horizontal, SIZE_SLOT );
-                rectSlot.SetSizeWithCurrentAnchors( RectTransform.Axis.Vertical, SIZE_SLOT );
+                _rectSlot.SetSizeWithCurrentAnchors( RectTransform.Axis.Horizontal, SIZE_SLOT );
+                _rectSlot.SetSizeWithCurrentAnchors( RectTransform.Axis.Vertical, SIZE_SLOT );
 
                 //Update the name just to have a nice hierarchy
-                slot.name = "Slot_" + x + "_" + y;
+                _slot.name = "Slot_" + _x + "_" + _y;
             }
         }
 
-        return panel;
+        return _panel;
     }
     #endregion
 
-    #region Item OnChange
-    void AddItem ( Inventory inventory, Item item , Inventory.InventoryPosition pos) {
-        if (!inventoryPanelRef.ContainsKey(inventory.name)) {
-            Debug.LogError( "Cannot add an item sprite, because the inventory (" + inventory.name + ") is not register." );
-            return;
-        }
-
-        //Create the sprite into the inventory Panel 
-        GameObject sprite = Instantiate( itemPrefab, inventoryPanelRef[ inventory.name ].transform ) as GameObject;
-
-        //Name
-        sprite.name = item.id.ToString() + "_" + pos.x + "_" + pos.y;
-
-        //Sprite
-        sprite.GetComponent<Image>().sprite = Resources.Load<Sprite>( "Items/" + item.id.ToString() );
-
-        RectTransform rect = sprite.GetComponent<RectTransform>();
-
-        //Position
-        rect.anchoredPosition = new Vector3( pos.x * SIZE_SLOT, -pos.y * SIZE_SLOT, 0 );
-
-        //Size
-        rect.SetSizeWithCurrentAnchors( RectTransform.Axis.Horizontal, SIZE_SLOT );
-        rect.SetSizeWithCurrentAnchors( RectTransform.Axis.Vertical, SIZE_SLOT );
-    }
-
-    void RemoveItem( Inventory inventory, Item item, Inventory.InventoryPosition pos ) {
-        if( !inventoryPanelRef.ContainsKey( inventory.name ) ) {
-            Debug.LogError( "Cannot remove an item sprite, because the inventory (" + inventory.name + ") is not register." );
-            return;
-        }
-
-        //Remove the Sprite
-        Transform curInv = inventoryPanelRef[ inventory.name ].transform;
-        for( int i = curInv.childCount - 1; i >= 0; --i ) {
-            Transform curChild = curInv.GetChild( i );
-            if( curChild.name == item.id.ToString() + "_" + pos.x + "_" + pos.y ) {
-                Destroy( curChild.gameObject );
-                return;
-            }
-        }
-    }
-
-    #endregion
 }

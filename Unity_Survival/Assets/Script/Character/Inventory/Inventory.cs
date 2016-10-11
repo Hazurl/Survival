@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
-using UnityEngine.UI;
 using System;
 
 public class Inventory
@@ -20,13 +19,7 @@ public class Inventory
 
     #endregion
 
-    #region Constante
-    #endregion
-
     #region staticAttributs
-    private static Dictionary<string, GameObject> inventoryPanels = new Dictionary<string, GameObject>();
-    private static Dictionary<string, Inventory> inventoryName = new Dictionary<string, Inventory>();
-
     public InventoryControler Controler = InventoryControler.instance;
     #endregion
 
@@ -34,32 +27,31 @@ public class Inventory
     /// <summary>
     /// Constructors
     /// </summary>
-    /// <param name="Space">The inventorySpace of the inventory, this is a class from <see cref="Inventory.InventorySpace"/></param>
-    /// <param name="inventory">The inventory copied in the current, it must be smaller or of the same size</param>
-    public Inventory (InventorySpace Space, string name, Inventory inventory = null, bool showInventory = false) {
+    /// <param name="_invSpace">The inventorySpace of the inventory, this is a class from <see cref="Inventory.InventorySpace"/></param>
+    /// <param name="_invForCopy">The inventory copied in the current, it must be smaller or of the same size</param>
+    public Inventory (InventorySpace _invSpace, string _name, Inventory _invForCopy = null, bool _showInventory = false) {
         //I don't want to have a negative array, an inventory must be more or equals than 1 * 1 array
-        if( Space.x < 1 || Space.y < 1 ) throw new System.Exception( "Inventory can't have negative or null space" );
+        if( _invSpace.x < 1 || _invSpace.y < 1 ) throw new System.Exception( "Inventory can't have negative or null space" );
 
         //Initialize Attribut
-        this.inventorySpace = Space;
-        virtualInventory = new Item[ Space.x, Space.y ];
-        itemPosition = new Dictionary<int, InventoryPosition>( Space.Lenght );
-        this.name = name;
+        inventorySpace = _invSpace;
+        virtualInventory = new Item[ _invSpace.x, _invSpace.y ];
+        itemPosition = new Dictionary<int, InventoryPosition>( _invSpace.Lenght );
+        name = _name;
 
-        if( inventory != null ) {
+        if( _invForCopy != null ) {
             //Add Some Start Item in the inventory
             //But we can't do this if the space is less than this inventory
-            if( Space.x < inventory.inventorySpace.x || Space.y < inventory.inventorySpace.y ) return;
+            if( _invSpace.x < _invForCopy.inventorySpace.x || _invSpace.y < _invForCopy.inventorySpace.y ) return;
 
-            for( int i = 0; i < inventory.inventorySpace.x; ++i )
-                for( int j = 0; j < inventory.inventorySpace.y; ++j )
-                    virtualInventory[ i, j ] = inventory.virtualInventory[ i, j ];
+            for( int i = 0; i < _invForCopy.inventorySpace.x; ++i )
+                for( int j = 0; j < _invForCopy.inventorySpace.y; ++j )
+                    virtualInventory[ i, j ] = _invForCopy.virtualInventory[ i, j ];
         }
 
         //Add Inventory into the inventory Panel
-        if( !showInventory ) return;
-        Controler.AddInventoryPanel( Controler.CreatePanel( name, this ), ref OnAddingItem, ref OnRemovingItem );
-        inventoryName.Add( name, this );
+        if( !_showInventory ) return;
+        Controler.AddInventoryPanel( Controler.CreatePanel( _name, this ), ref OnAddingItem, ref OnRemovingItem );
     }
 	#endregion
 
@@ -67,41 +59,42 @@ public class Inventory
 	/// <summary>
 	/// Add an item into the inventory
 	/// </summary>
-	/// <param name="item">The Item to put it in</param>
+	/// <param name="_item">The Item to put it in</param>
 	/// <returns>Return True if it can be put else return false</returns>
-	public bool AddItem( Item item ) {
-		InventoryPosition pos = FindPositionFor( item.spaceRequired );
+	public bool AddItem( Item _item ) {
+		InventoryPosition _pos = FindPositionFor( _item.spaceRequired );
 
-		if( pos == null )
+		if( _pos == null )
 			return false;
 
-		for( int i = pos.x; i < item.spaceRequired.x + pos.x; i++ )
-			for( int j = pos.y; j < item.spaceRequired.y + pos.y; j++ )
-				virtualInventory[ i, j ] = item;
+		for( int i = _pos.x; i < _item.spaceRequired.x + _pos.x; i++ )
+			for( int j = _pos.y; j < _item.spaceRequired.y + _pos.y; j++ )
+				virtualInventory[ i, j ] = _item;
 
-		itemPosition[ item.uniqueId ] = pos;
+		itemPosition[ _item.uniqueId ] = _pos;
 
-        OnAddingItem( this, item, pos );
+        OnAddingItem( this, _item, _pos );
         return true;
 	}
 
 	/// <summary>
 	/// Remove an Item of this inventory
 	/// </summary>
-	/// <param name="item">The Item to remve</param>
+	/// <param name="_item">The Item to remve</param>
 	/// <returns>Retrn the success of this action</returns>
-	public bool RemoveItem ( Item item ) {
-		InventoryPosition pos;
-		if((pos = itemPosition[ item.uniqueId ]) == null )
+	public bool RemoveItem ( Item _item ) {
+        InventoryPosition _pos = itemPosition[ _item.uniqueId ];
+
+        if( _pos == null )
 			return false;
 
-		for( int i = pos.x; i < item.spaceRequired.x + pos.x; i++ )
-			for( int j = pos.y; j < item.spaceRequired.y + pos.y; j++ )
+		for( int i = _pos.x; i < _item.spaceRequired.x + _pos.x; i++ )
+			for( int j = _pos.y; j < _item.spaceRequired.y + _pos.y; j++ )
 				virtualInventory[ i, j ] = null;
 
-		itemPosition.Remove( item.uniqueId );
+		itemPosition.Remove( _item.uniqueId );
 
-        OnRemovingItem( this, item, pos );
+        OnRemovingItem( this, _item, _pos );
         return true;
 	}
 
@@ -109,33 +102,33 @@ public class Inventory
 	/// Method to search and find a space to pt an Item in the inventory
 	/// TODO: Opti !
 	/// </summary>
-	/// <param name="space">The space of the item</param>
+	/// <param name="_space">The space of the item</param>
 	/// <returns>The position of the item or null if he can't</returns>
-	private InventoryPosition FindPositionFor( InventorySpace space ) {
+	private InventoryPosition FindPositionFor( InventorySpace _space ) {
 		//Return null if the Inventory space is smaller than the item
-		if( inventorySpace.x < space.x || inventorySpace.y < space.y )
+		if( inventorySpace.x < _space.x || inventorySpace.y < _space.y )
 			return null;
 
-        for( int j = 0; j < inventorySpace.y - space.y + 1; j++ ) {
-            for( int i = 0; i < inventorySpace.x - space.x + 1; i++ ) {
-                bool PosOk = true;
-                for( int _j = 0; _j < space.y; _j++ ) {
-                    for( int _i = 0; _i < space.x; _i++ ) {
-                        if( virtualInventory[ _i + i, _j + j ] != null ) {
-                            PosOk = false;
-                            j += _j;
+        for( int _invSpaceX = 0; _invSpaceX < inventorySpace.y - _space.y + 1; _invSpaceX++ ) {
+            for( int _invSpaceY = 0; _invSpaceY < inventorySpace.x - _space.x + 1; _invSpaceY++ ) {
+                bool _posOK = true;
+                for( int _internSpaceY = 0; _internSpaceY < _space.y; _internSpaceY++ ) {
+                    for( int _internSpaceX = 0; _internSpaceX < _space.x; _internSpaceX++ ) {
+                        if( virtualInventory[ _internSpaceX + _invSpaceY, _internSpaceY + _invSpaceX ] != null ) {
+                            _posOK = false;
+                            _invSpaceX += _internSpaceY;
                             break;
                         }
                     }
-                    if( !PosOk ) break;
+                    if( !_posOK ) break;
                 }
 
-                if( PosOk )
-                    return new InventoryPosition( i, j );
+                if( _posOK )
+                    return new InventoryPosition( _invSpaceY, _invSpaceX );
             }
         }
         //if we are here, It's beacause there is no space for this Item
-        Debug.LogError( "No Space for " + space.x + " : " + space.y );
+        Debug.LogError( "No Space for " + _space.x + " : " + _space.y );
 		return null;
 	}
     #endregion
@@ -151,9 +144,9 @@ public class Inventory
         #endregion
 
         #region Constructors
-        public InventorySpace(int x, int y) {
-            this.x = x;
-            this.y = y;
+        public InventorySpace(int _x, int _y) {
+            x = _x;
+            y = _y;
         }
         #endregion
     }
@@ -170,9 +163,9 @@ public class Inventory
 		#endregion
 
 		#region Constructors
-		public InventoryPosition( int x, int y ) {
-			this.x = x;
-			this.y = y;
+		public InventoryPosition( int _x, int _y ) {
+			x = _x;
+			y = _y;
 		}
 		#endregion
 	}

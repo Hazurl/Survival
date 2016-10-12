@@ -26,6 +26,7 @@ public class Character : MonoBehaviour {
     private Vector3 offset;
 
     //Inventory
+    [SerializeField]
     private Inventory inventory;
 
     void Start () {
@@ -35,7 +36,8 @@ public class Character : MonoBehaviour {
         offset = camTf.position - tf.position;
 
         //Initialize inventory, later we should initialize from a save
-        inventory = new Inventory( new Inventory.InventorySpace( INVENTORY_CAPACITY_X, INVENTORY_CAPACITY_Y ), "MyInventory", null, true );
+        //inventory = new Inventory( new Inventory.InventorySpace( INVENTORY_CAPACITY_X, INVENTORY_CAPACITY_Y ), "MyInventory", null, true );
+        inventory = new Inventory( 5, 5 );
     }
 
     void Update () {
@@ -57,11 +59,11 @@ public class Character : MonoBehaviour {
         if( Global.instance.GodMod) {
             //Add a log in your inventory
             if( Input.GetKeyDown( KeyCode.L ) )
-                inventory.AddItem( new ItemRect( ItemRect.ItemID.LOG, new Inventory.InventorySpace( 1, 1 ) ) );
+                inventory.AddItem( new ItemRect( 0, 0, 1, 1, new ItemData( ItemData.ItemID.LOG ) ) );
 
             //Destroy Random Item
-            if( Input.GetKeyDown( KeyCode.K ) )
-                inventory.RemoveItem( ItemRect.getItemfromUniqueId( Random.Range( 0, 5 ) ) );
+            if( Input.GetKeyDown( KeyCode.K ) ) ;
+                //inventory.RemoveItem( ItemRect.getItemfromUniqueId( Random.Range( 0, 5 ) ) );
         }
     }
 

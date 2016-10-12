@@ -5,100 +5,14 @@ using UnityEngine.UI;
 
 [DisallowMultipleComponent]
 public class InventoryControler : MonoBehaviour {
+    #region LastVersion
+    /*
 
-    #region InventoryControlerInstance
-    public static InventoryControler instance;
-    void Awake() {
-        if( instance != null ) {
-            Debug.LogError( "There is more than 1 instance of InventoryControler !" );
-            return;
-        }
-        instance = this;
-    }
-    #endregion
-
-    #region Preset
-    [Header("Where the inventory will be display")]
-    public GameObject targetPanel;
-
-    [Space( 5 )]
-    public GameObject scrollBar;
-
-    [Space(10)]
-    [Header("Prefab used to build the inventory")]
-    public GameObject panelPrefab;
-    public GameObject slotPrefab;
-    public GameObject itemPrefab;
-
-    void Start () {
-        if( panelPrefab == null || slotPrefab == null || itemPrefab == null )
-            Debug.LogError( "Inventory Prefab not initialized" );
-        if( targetPanel == null )
-            Debug.LogError( "Panel holding the inventory system isn't referenced" );
-        if( scrollBar == null )
-            Debug.LogError( "Inventory system need a reference to a Scroll Bar" );
-        //Get the current hide state
-        isHide = targetPanel.activeSelf;
-    }
-    #endregion
-
-    #region Toggle Hide
-    public bool isHide { get; private set; }
-
-    public void HideInventory () {
-        if( isHide )
-            return;
-        targetPanel.SetActive( true );
-        isHide = true;
-
-        if( targetPanel.GetComponent<RectTransform>().rect.height > ACTIVE_SCROLLBAR_HEIGHT && targetPanel.activeInHierarchy ) {
-            scrollBar.SetActive( true );
-        } else {
-            scrollBar.SetActive( false );
-        }
-
-    }
-
-    public void ShowInventory() {
-        if( !isHide )
-            return;
-        targetPanel.SetActive( false );
-        isHide = false;
-
-        if( targetPanel.GetComponent<RectTransform>().rect.height > ACTIVE_SCROLLBAR_HEIGHT && targetPanel.activeInHierarchy ) {
-            scrollBar.SetActive( true );
-            scrollBar.GetComponent<Scrollbar>().size = 1;
-        } else {
-            scrollBar.SetActive( false );
-        }
-
-    }
-
-    public void ToggleInventory() {
-        if( isHide )
-            ShowInventory();
-        else
-            HideInventory();
-    }
-
-    #endregion
 
     #region Inventory Panel Controler
     private Dictionary<string, GameObject> inventoryPanelRef = new Dictionary<string, GameObject>();
     private Vector2 offset = Vector3.zero;
 
-    #region Constante
-    [ Space(10)]
-    [Header("Constante pour graphique :")]
-    [SerializeField]
-    private int SIZE_SLOT = 50;
-    [SerializeField]
-    private int SPACE_BETWEEN_PANEL = 50;
-    [SerializeField]
-    private Vector2 POS_DEFAULT_PANEL = Vector2.zero;
-    [SerializeField]
-    private int ACTIVE_SCROLLBAR_HEIGHT = 300;
-    #endregion
 
     public void AddInventoryPanel ( GameObject _panel, ref Action<Inventory, ItemRect, Inventory.InventoryPosition> _OnAddingItem, ref Action<Inventory, ItemRect, Inventory.InventoryPosition> _OnRemovingItem ) {
         inventoryPanelRef.Add( _panel.name, _panel );
@@ -215,9 +129,128 @@ public class InventoryControler : MonoBehaviour {
         return _panel;
     }
     #endregion
+    */
+    #endregion
+
+    #region InventoryControlerInstance
+    public static InventoryControler instance;
+    void Awake() {
+        if( instance != null ) {
+            Debug.LogError( "There is more than 1 instance of InventoryControler !" );
+            return;
+        }
+        instance = this;
+    }
+    #endregion
+
+    #region Constante
+    [Space( 10 )]
+    [Header( "Constante pour graphique :" )]
+    [SerializeField]
+    private int SIZE_SLOT = 50;
+    [SerializeField]
+    private int SPACE_BETWEEN_PANEL = 50;
+    [SerializeField]
+    private Vector2 POS_DEFAULT_PANEL = Vector2.zero;
+    [SerializeField]
+    private int ACTIVE_SCROLLBAR_HEIGHT = 300;
+    #endregion
+
+    #region Preset
+    [Header( "Where the inventory will be display" )]
+    public GameObject targetPanel;
+
+    [Space( 5 )]
+    public GameObject scrollBar;
+
+    [Space( 10 )]
+    [Header( "Prefab used to build the inventory" )]
+    public GameObject panelPrefab;
+    public GameObject slotPrefab;
+    public GameObject itemPrefab;
+
+    void Start() {
+        if( panelPrefab == null || slotPrefab == null || itemPrefab == null )
+            Debug.LogError( "Inventory Prefab not initialized" );
+        if( targetPanel == null )
+            Debug.LogError( "Panel holding the inventory system isn't referenced" );
+        if( scrollBar == null )
+            Debug.LogError( "Inventory system need a reference to a Scroll Bar" );
+        //Get the current hide state
+        isHide = targetPanel.activeSelf;
+    }
+    #endregion
+
+    #region Toggle Hide
+    public bool isHide { get; private set; }
+
+    public void HideInventory() {
+        if( isHide )
+            return;
+        targetPanel.SetActive( true );
+        isHide = true;
+
+        if( targetPanel.GetComponent<RectTransform>().rect.height > ACTIVE_SCROLLBAR_HEIGHT && targetPanel.activeInHierarchy ) {
+            scrollBar.SetActive( true );
+        } else {
+            scrollBar.SetActive( false );
+        }
+
+    }
+
+    public void ShowInventory() {
+        if( !isHide )
+            return;
+        targetPanel.SetActive( false );
+        isHide = false;
+
+        if( targetPanel.GetComponent<RectTransform>().rect.height > ACTIVE_SCROLLBAR_HEIGHT && targetPanel.activeInHierarchy ) {
+            scrollBar.SetActive( true );
+            scrollBar.GetComponent<Scrollbar>().size = 1;
+        } else {
+            scrollBar.SetActive( false );
+        }
+
+    }
+
+    public void ToggleInventory() {
+        if( isHide )
+            ShowInventory();
+        else
+            HideInventory();
+    }
+
+    #endregion
+
+    //Nouveaux attributs
+
+    //      ( Cle : Valeur ) -> ( Inventaire : Panel ) 
+    Dictionary<Inventory, GameObject> InventoriesPanels = new Dictionary<Inventory, GameObject>();
 
     //Nouvelle methodes :
     public void DisplayItem( Inventory _inventory, ItemRect _itemRect ) {
+        GameObject _panel;
 
+        if( !InventoriesPanels.TryGetValue( _inventory, out _panel ) )
+            return;
+
+        //Create the sprite into the inventory Panel 
+        GameObject _sprite = Instantiate( itemPrefab, _panel.transform ) as GameObject;
+
+        //Name
+        string _name = _itemRect.data.Id.ToString();
+        _sprite.name = _name + "_" + _itemRect.X + "_" + _itemRect.Y;
+
+        //Sprite
+        _sprite.GetComponent<Image>().sprite = Resources.Load<Sprite>( "Items/" + _name );
+
+        RectTransform _rect = _sprite.GetComponent<RectTransform>();
+
+        //Position
+        _rect.anchoredPosition = new Vector3( _itemRect.X * SIZE_SLOT, -_itemRect.Y * SIZE_SLOT, 0 );
+
+        //Size
+        _rect.SetSizeWithCurrentAnchors( RectTransform.Axis.Horizontal, SIZE_SLOT );
+        _rect.SetSizeWithCurrentAnchors( RectTransform.Axis.Vertical, SIZE_SLOT );
     }
 }

@@ -4,11 +4,10 @@ using UnityEngine.UI;
 public class Global : MonoBehaviour {
 
     #region staticAttributs
-    [SerializeField]
-    public bool GodMod { get; private set; }
+    public bool GodMod = true;
     #endregion
 
-    #region InventoryControlerInstance
+    #region GlobalInstance
     public static Global instance;
     void Awake() {
         if( instance != null ) {

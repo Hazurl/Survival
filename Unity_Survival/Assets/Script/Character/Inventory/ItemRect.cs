@@ -66,9 +66,13 @@ public class ItemRect
     #endregion
     */
     #endregion
-
+    
+    [SerializeField]
     public Rect rect;
-    public Itemdata data;
+    [SerializeField]
+    public ItemData data;
+
+    [NonSerialized]
     public Inventory InventoryContainer;
 
     // Easy Accessor
@@ -94,17 +98,17 @@ public class ItemRect
     }
 
     #region Constructor
-    public ItemRect (Rect _rect, Itemdata _data ) {
+    public ItemRect (Rect _rect, ItemData _data ) {
         rect = _rect;
         data = _data;
     }
 
-    public ItemRect (float _x, float _y, float _w, float _h, Itemdata _data ) {
+    public ItemRect (float _x, float _y, float _w, float _h, ItemData _data ) {
         rect = new Rect( _x, _y, _w, _h );
         data = _data;
     }
 
-    public ItemRect( Vector2 _position, Vector2 _size, Itemdata _data ) {
+    public ItemRect( Vector2 _position, Vector2 _size, ItemData _data ) {
         rect = new Rect( _position, _size );
         data = _data;
     }

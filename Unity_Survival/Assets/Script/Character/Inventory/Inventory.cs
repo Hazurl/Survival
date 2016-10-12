@@ -177,8 +177,23 @@ public class Inventory
     */
     #endregion
 
+    #region Constructors
+    public Inventory (float _width, float _height) {
+        width = _width;
+        height = _height;
+
+        //TODO : Rajouter la creation du panel avec la class InventoryControler
+    }
+    #endregion
+
+
     //Liste des items dans l'inventaire
-    private List<ItemRect> Items;
+    [SerializeField]
+    private List<ItemRect> Items = new List<ItemRect>();
+    [SerializeField]
+    private float width;
+    [SerializeField]
+    private float height;
 
     public bool AddItem( ItemRect _itemRect ) {
         //On test la collision avec ch  aque item de notre inventaire

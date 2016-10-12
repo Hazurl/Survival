@@ -71,7 +71,9 @@ public class Chopable : MonoBehaviour, IDebuguable
         BreakThree();
         //Drop 1 to 3 Wood (maybe it should be a paremeter ?)
         //FIXME : We have to drop Item on the floor, not giving them to the character immediately
-        _items.Add( new ItemRect( ItemRect.ItemID.LOG, new Inventory.InventorySpace( 1, 1 ) ) );
+
+        //_items.Add( new ItemRect( ItemRect.ItemID.LOG, new Inventory.InventorySpace( 1, 1 ) ) );
+
         return true; //The three is dead
     }
 

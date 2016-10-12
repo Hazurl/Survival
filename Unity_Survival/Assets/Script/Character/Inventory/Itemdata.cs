@@ -1,9 +1,12 @@
 ﻿using System;
+using UnityEngine;
 
 [System.Serializable]
-public class Itemdata {
+public class ItemData {
 
+    [SerializeField]
     private ItemID id;
+    [SerializeField]
     DataStructure extraData;
 
     // Property
@@ -13,14 +16,13 @@ public class Itemdata {
         }
     }
     public ItemID Id {
-        set {
-            this.id = value;
+        get {
+            return id;
         }
     }
 
-
     #region Constructors
-    void ItemData (ItemID _id, DataStructure _extraData = null) {
+    public ItemData (ItemID _id, DataStructure _extraData = null) {
         id = _id;
         extraData = _extraData;
     }
@@ -49,6 +51,7 @@ public class Itemdata {
 
 }
 
+[System.Serializable]
 public class DataStructure {
 
 }

@@ -208,10 +208,12 @@ public class Inventory
 
     public bool AddItem( ItemRect _itemRect ) {
         //On test la collision avec ch  aque item de notre inventaire
-        /*foreach (ItemRect item in Items) {
+        Debug.Log( "Add item" );
+        foreach( ItemRect item in Items) {
             if( item.CollideWith( _itemRect ) )
                 return false;
-        }*/
+        }
+        Debug.Log( "Not colliding" );
 
         //On ajoute l'item
         Items.Add( _itemRect );
@@ -219,7 +221,6 @@ public class Inventory
 
         //On l'affiche
         InventoryControler.instance.AddItemOnPanel(this, _itemRect );
-        Debug.Log( "Add item" );
 
         return true;
     }

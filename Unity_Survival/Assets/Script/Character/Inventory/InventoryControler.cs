@@ -232,12 +232,10 @@ public class InventoryControler : MonoBehaviour {
     public void AddItemOnPanel( Inventory _inventory, ItemRect _itemRect ) {
         GameObject _panel;
 
-        Debug.Log( "Display it !" );
-
         if( !InventoriesPanels.TryGetValue( _inventory, out _panel ) )
             return;
 
-        Debug.Log( "Should be ok ?" );
+        Debug.Log( "Display it !" );
 
         //Create the sprite into the inventory Panel 
         GameObject _sprite = Instantiate( itemPrefab, _panel.transform ) as GameObject;

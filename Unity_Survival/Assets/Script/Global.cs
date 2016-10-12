@@ -9,8 +9,8 @@ public class Global : MonoBehaviour {
     private Character character;
     [SerializeField]
     private InputField inputField;
-    [SerializeField]
-    private Text cmd;
+
+    private string LastCmd = "";
 
     #region GlobalInstance
     public static Global instance;
@@ -26,9 +26,13 @@ public class Global : MonoBehaviour {
     public void Update () {
         ActiveGetKey = !inputField.isFocused;
 
-        if( Input.GetKeyDown( KeyCode.Return ) && cmd.text != "" )  {
-            ValidCmd( cmd.text );
-            cmd.text = "";
+        if( Input.GetKeyDown( KeyCode.UpArrow ) && !ActiveGetKey) {
+            inputField.text = LastCmd;
+        }
+
+        if( Input.GetKeyDown( KeyCode.Return ) && inputField.text != "" )  {
+            ValidCmd( inputField.text );
+            inputField.text = "";
         }
     }
 
@@ -40,29 +44,17 @@ public class Global : MonoBehaviour {
         if( _cmds[ 0 ] != "give" )
             return;
 
-        int _id;
-        if( !int.TryParse( _cmds[ 1 ], out _id ) )
-            return;
-
         ItemData.ItemID _itemID;
-        if( ( _itemID = ItemData.ConvertIdToItem( _id ) ) == ItemData.ItemID.INVALID ) 
+        int _id, _x, _y, _w, _h;
+        if( ( !int.TryParse( _cmds[ 1 ], out _id ) )
+         || ( (_itemID = ItemData.ConvertIdToItem( _id ) ) == ItemData.ItemID.INVALID )
+         || ( !int.TryParse( _cmds[ 2 ], out _x ) )
+         || ( !int.TryParse( _cmds[ 3 ], out _y ) )
+         || ( !int.TryParse( _cmds[ 4 ], out _w ) )
+         || ( !int.TryParse( _cmds[ 5 ], out _h ) ) )
             return;
 
-        int _x;
-        if( !int.TryParse( _cmds[ 2 ], out _x ) )
-            return;
-
-        int _y;
-        if( !int.TryParse( _cmds[ 3 ], out _y ) )
-            return;
-
-        int _w;
-        if( !int.TryParse( _cmds[ 4 ], out _w ) )
-            return;
-
-        int _h;
-        if( !int.TryParse( _cmds[ 5 ], out _h ) )
-            return;
+        LastCmd = _cmd;
 
         character.giveItem( new ItemRect( _x, _y, _w, _h, new ItemData( _itemID ) ) );
     }

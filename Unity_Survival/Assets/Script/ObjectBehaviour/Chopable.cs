@@ -62,16 +62,16 @@ public class Chopable : MonoBehaviour, IDebuguable
     /// <param name="_dam">Le nombre de dégâts</param>
     /// <param name="_items">La liste des items droppables si l'Objet en drop</param>
     /// <returns>True si L'objet drop des items</returns>
-    public bool Chop(int _dam, out List<Item> _items)
+    public bool Chop(int _dam, out List<ItemRect> _items)
     {
-        _items = new List<Item>();
+        _items = new List<ItemRect>();
         if( (currentLife -= _dam) > 0) return false; //The three is still alive
 
         //At this point the three has been entirely chop, so play the animation and update drop list
         BreakThree();
         //Drop 1 to 3 Wood (maybe it should be a paremeter ?)
         //FIXME : We have to drop Item on the floor, not giving them to the character immediately
-        _items.Add( new Item( Item.ItemID.LOG, new Inventory.InventorySpace( 1, 1 ) ) );
+        _items.Add( new ItemRect( ItemRect.ItemID.LOG, new Inventory.InventorySpace( 1, 1 ) ) );
         return true; //The three is dead
     }
 

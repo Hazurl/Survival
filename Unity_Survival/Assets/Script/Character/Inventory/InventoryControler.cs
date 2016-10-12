@@ -100,7 +100,7 @@ public class InventoryControler : MonoBehaviour {
     private int ACTIVE_SCROLLBAR_HEIGHT = 300;
     #endregion
 
-    public void AddInventoryPanel ( GameObject _panel, ref Action<Inventory, Item, Inventory.InventoryPosition> _OnAddingItem, ref Action<Inventory, Item, Inventory.InventoryPosition> _OnRemovingItem ) {
+    public void AddInventoryPanel ( GameObject _panel, ref Action<Inventory, ItemRect, Inventory.InventoryPosition> _OnAddingItem, ref Action<Inventory, ItemRect, Inventory.InventoryPosition> _OnRemovingItem ) {
         inventoryPanelRef.Add( _panel.name, _panel );
 
         //Callback
@@ -156,7 +156,7 @@ public class InventoryControler : MonoBehaviour {
 
     public GameObject CreatePanel( string _nameIdentifier, Inventory _inventory, bool _DisplayOnDebugLog = false) {
         Inventory.InventorySpace _invSpace = _inventory.inventorySpace;
-        Item[,] _virtualInv = _inventory.virtualInventory;
+        ItemRect[,] _virtualInv = _inventory.virtualInventory;
 
         if( _DisplayOnDebugLog ) {
             #region Display On Debug.Log
@@ -216,4 +216,8 @@ public class InventoryControler : MonoBehaviour {
     }
     #endregion
 
+    //Nouvelle methodes :
+    public void DisplayItem( Inventory _inventory, ItemRect _itemRect ) {
+
+    }
 }

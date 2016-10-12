@@ -57,11 +57,11 @@ public class Character : MonoBehaviour {
         if( Global.instance.GodMod) {
             //Add a log in your inventory
             if( Input.GetKeyDown( KeyCode.L ) )
-                inventory.AddItem( new Item( Item.ItemID.LOG, new Inventory.InventorySpace( 1, 1 ) ) );
+                inventory.AddItem( new ItemRect( ItemRect.ItemID.LOG, new Inventory.InventorySpace( 1, 1 ) ) );
 
             //Destroy Random Item
             if( Input.GetKeyDown( KeyCode.K ) )
-                inventory.RemoveItem( Item.getItemfromUniqueId( Random.Range( 0, 5 ) ) );
+                inventory.RemoveItem( ItemRect.getItemfromUniqueId( Random.Range( 0, 5 ) ) );
         }
     }
 
@@ -127,12 +127,12 @@ public class Character : MonoBehaviour {
                     if (_target == null || _target.isDead() || (_hit.collider.transform.position - tf.position).magnitude < CHOP_DISTANCE) return;
 
                     //Damage th three, get the drop list of items if he die, and finally updtae reload Time
-                    List<Item> _drop = new List<Item>();
+                    List<ItemRect> _drop = new List<ItemRect>();
                     if (_target.Chop(CHOP_DAMAGE_PER_SECOND, out _drop))
                     {
                         Debug.Log("A three has been chop");
-                        List<Item> _dropOverflow = new List<Item>( _drop );
-                        foreach( Item item in _dropOverflow )
+                        List<ItemRect> _dropOverflow = new List<ItemRect>( _drop );
+                        foreach( ItemRect item in _dropOverflow )
                             if( inventory.AddItem( item ) ) _dropOverflow.Remove( item );
 
                         if (_dropOverflow.Count > 0) Debug.Log("Inventory Overflow");

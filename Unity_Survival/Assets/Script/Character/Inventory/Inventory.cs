@@ -178,6 +178,23 @@ public class Inventory
     #endregion
 
     //Liste des items dans l'inventaire
-    List<Item> Items;
+    private List<ItemRect> Items;
+
+    public bool AddItem( ItemRect _itemRect ) {
+        //On test la collision avec ch  aque item de notre inventaire
+        foreach (ItemRect item in Items) {
+            if( item.CollideWith( _itemRect ) )
+                return false;
+        }
+
+        //On ajoute l'item
+        Items.Add( _itemRect );
+        _itemRect.InventoryContainer = this;
+
+        //On l'affiche
+        InventoryControler.instance.DisplayItem(this, _itemRect );
+
+        return true;
+    }
 
 }

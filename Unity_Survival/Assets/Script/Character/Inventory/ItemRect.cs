@@ -3,7 +3,7 @@ using System;
 using UnityEngine;
 
 [System.Serializable]
-public class Item
+public class ItemRect
 {
     #region Last Version
     /*
@@ -69,6 +69,7 @@ public class Item
 
     public Rect rect;
     public Itemdata data;
+    public Inventory InventoryContainer;
 
     // Easy Accessor
     public float X {
@@ -92,21 +93,24 @@ public class Item
         }
     }
 
-
     #region Constructor
-    public Item (Rect _rect, Itemdata _data ) {
+    public ItemRect (Rect _rect, Itemdata _data ) {
         rect = _rect;
         data = _data;
     }
 
-    public Item (float _x, float _y, float _w, float _h, Itemdata _data) {
+    public ItemRect (float _x, float _y, float _w, float _h, Itemdata _data ) {
         rect = new Rect( _x, _y, _w, _h );
         data = _data;
     }
 
-    public Item( Vector2 _position, Vector2 _size, Itemdata _data ) {
+    public ItemRect( Vector2 _position, Vector2 _size, Itemdata _data ) {
         rect = new Rect( _position, _size );
         data = _data;
     }
     #endregion
+
+    public bool CollideWith( ItemRect other ) {
+        return X >= other.rect.xMin || rect.xMin <= other.X || Y >= other.rect.yMin || rect.yMin <= other.Y;
+    }
 }

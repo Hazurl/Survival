@@ -147,7 +147,7 @@ public class InventoryControler : MonoBehaviour {
     [Space( 10 )]
     [Header( "Constante pour graphique :" )]
     [SerializeField]
-    private int SIZE_SLOT = 50;
+    private int PANEL_SIZE = 50;
     [SerializeField]
     private int SPACE_BETWEEN_PANEL = 50;
     [SerializeField]
@@ -226,13 +226,18 @@ public class InventoryControler : MonoBehaviour {
 
     //      ( Cle : Valeur ) -> ( Inventaire : Panel ) 
     Dictionary<Inventory, GameObject> InventoriesPanels = new Dictionary<Inventory, GameObject>();
+    private Vector2 offset = Vector3.zero;
 
     //Nouvelle methodes :
-    public void DisplayItem( Inventory _inventory, ItemRect _itemRect ) {
+    public void AddItemOnPanel( Inventory _inventory, ItemRect _itemRect ) {
         GameObject _panel;
+
+        Debug.Log( "Display it !" );
 
         if( !InventoriesPanels.TryGetValue( _inventory, out _panel ) )
             return;
+
+        Debug.Log( "Should be ok ?" );
 
         //Create the sprite into the inventory Panel 
         GameObject _sprite = Instantiate( itemPrefab, _panel.transform ) as GameObject;
@@ -247,10 +252,51 @@ public class InventoryControler : MonoBehaviour {
         RectTransform _rect = _sprite.GetComponent<RectTransform>();
 
         //Position
-        _rect.anchoredPosition = new Vector3( _itemRect.X * SIZE_SLOT, -_itemRect.Y * SIZE_SLOT, 0 );
+        _rect.anchoredPosition = new Vector3( _itemRect.X * PANEL_SIZE, -_itemRect.Y * PANEL_SIZE, 0 );
 
         //Size
-        _rect.SetSizeWithCurrentAnchors( RectTransform.Axis.Horizontal, SIZE_SLOT );
-        _rect.SetSizeWithCurrentAnchors( RectTransform.Axis.Vertical, SIZE_SLOT );
+        _rect.SetSizeWithCurrentAnchors( RectTransform.Axis.Horizontal, PANEL_SIZE * _itemRect.Width );
+        _rect.SetSizeWithCurrentAnchors( RectTransform.Axis.Vertical, PANEL_SIZE * _itemRect.Height );
     }
+
+    public void CreatePanel( Inventory _inventory ) {
+        CreatePanel( _inventory, targetPanel );
+    }
+
+    public void CreatePanel( Inventory _inventory, GameObject target) {
+        //The Panel which holding slots
+        GameObject _panel = Instantiate( panelPrefab, target.transform ) as GameObject;
+        _panel.name = targetPanel.name + targetPanel.transform.childCount.ToString();
+        _panel.transform.localRotation = Quaternion.identity;
+        _panel.GetComponent<RectTransform>().anchoredPosition = POS_DEFAULT_PANEL + offset;
+
+        InventoriesPanels.Add( _inventory, _panel );
+        
+        //Update offset
+        offset.y -= SPACE_BETWEEN_PANEL + _inventory.Height * PANEL_SIZE;
+
+        //Update targetPanel height
+        target.GetComponent<RectTransform>().sizeDelta = new Vector2( 0, -offset.y - SPACE_BETWEEN_PANEL );
+        
+        //Update Scrollbar
+        if( target.GetComponent<RectTransform>().rect.height > ACTIVE_SCROLLBAR_HEIGHT && target.activeInHierarchy ) {
+            scrollBar.SetActive( true );
+        } else {
+            scrollBar.SetActive( false );
+        }
+
+        //Create the current Slot
+        GameObject _slot = Instantiate( slotPrefab, _panel.transform ) as GameObject;
+        RectTransform _rectSlot = _slot.GetComponent<RectTransform>();
+
+        //Change her Position
+        _rectSlot.anchoredPosition = Vector3.zero;
+
+        //Change Size
+        _rectSlot.SetSizeWithCurrentAnchors( RectTransform.Axis.Horizontal, _inventory.Width * PANEL_SIZE );
+        _rectSlot.SetSizeWithCurrentAnchors( RectTransform.Axis.Vertical, _inventory.Height * PANEL_SIZE );
+
+        //return _panel;
+    }
+
 }

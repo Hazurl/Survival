@@ -51,6 +51,9 @@ public class Character : MonoBehaviour {
         //Choping
         Chop();
 
+        if( !Global.instance.ActiveGetKey )
+            return;
+
         //If 'I' KW is press, toggle the inventory
         if( Input.GetKeyDown( KeyCode.I ) )
             InventoryControler.instance.ToggleInventory();
@@ -62,8 +65,9 @@ public class Character : MonoBehaviour {
                 inventory.AddItem( new ItemRect( 0, 0, 1, 1, new ItemData( ItemData.ItemID.LOG ) ) );
 
             //Destroy Random Item
-            if( Input.GetKeyDown( KeyCode.K ) ) ;
+            if( Input.GetKeyDown( KeyCode.K ) )
                 //inventory.RemoveItem( ItemRect.getItemfromUniqueId( Random.Range( 0, 5 ) ) );
+                inventory.AddItem( new ItemRect( 1, 0, 1, 1, new ItemData( ItemData.ItemID.LOG ) ) );
         }
     }
 
@@ -147,5 +151,9 @@ public class Character : MonoBehaviour {
         {
             TimeToReload -= Time.deltaTime;
         }
+    }
+
+    public void giveItem ( ItemRect _itemRect ) {
+        inventory.AddItem( _itemRect );
     }
 }

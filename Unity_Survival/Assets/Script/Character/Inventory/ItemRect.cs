@@ -115,6 +115,6 @@ public class ItemRect
     #endregion
 
     public bool CollideWith( ItemRect other ) {
-        return X >= other.rect.xMin || rect.xMin <= other.X || Y >= other.rect.yMin || rect.yMin <= other.Y;
+        return X >= other.rect.xMin && rect.xMin <= other.X && Y >= other.rect.yMin && rect.yMin <= other.Y;
     }
 }

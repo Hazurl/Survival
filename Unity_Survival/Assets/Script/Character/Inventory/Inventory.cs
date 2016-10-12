@@ -182,7 +182,7 @@ public class Inventory
         width = _width;
         height = _height;
 
-        //TODO : Rajouter la creation du panel avec la class InventoryControler
+        InventoryControler.instance.CreatePanel( this );
     }
     #endregion
 
@@ -195,19 +195,31 @@ public class Inventory
     [SerializeField]
     private float height;
 
+    public float Width {
+        get {
+            return width;
+        }
+    }
+    public float Height {
+        get {
+            return height;
+        }
+    }
+
     public bool AddItem( ItemRect _itemRect ) {
         //On test la collision avec ch  aque item de notre inventaire
-        foreach (ItemRect item in Items) {
+        /*foreach (ItemRect item in Items) {
             if( item.CollideWith( _itemRect ) )
                 return false;
-        }
+        }*/
 
         //On ajoute l'item
         Items.Add( _itemRect );
         _itemRect.InventoryContainer = this;
 
         //On l'affiche
-        InventoryControler.instance.DisplayItem(this, _itemRect );
+        InventoryControler.instance.AddItemOnPanel(this, _itemRect );
+        Debug.Log( "Add item" );
 
         return true;
     }

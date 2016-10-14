@@ -4,132 +4,6 @@ using UnityEngine.UI;
 
 [DisallowMultipleComponent]
 public class InventoryControler : MonoBehaviour {
-    #region LastVersion
-    /*
-
-
-    #region Inventory Panel Controler
-    private Dictionary<string, GameObject> inventoryPanelRef = new Dictionary<string, GameObject>();
-    private Vector2 offset = Vector3.zero;
-
-
-    public void AddInventoryPanel ( GameObject _panel, ref Action<Inventory, ItemRect, Inventory.InventoryPosition> _OnAddingItem, ref Action<Inventory, ItemRect, Inventory.InventoryPosition> _OnRemovingItem ) {
-        inventoryPanelRef.Add( _panel.name, _panel );
-
-        //Callback
-        _OnAddingItem += (_inventory, _item, _pos) => {
-            if( !inventoryPanelRef.ContainsKey( _inventory.name ) ) {
-                Debug.LogError( "Cannot add an item sprite, because the inventory (" + _inventory.name + ") is not register." );
-                return;
-            }
-
-            //Create the sprite into the inventory Panel 
-            GameObject _sprite = Instantiate( itemPrefab, inventoryPanelRef[ _inventory.name ].transform ) as GameObject;
-
-            //Name
-            _sprite.name = _item.id.ToString() + "_" + _pos.x + "_" + _pos.y;
-
-            //Sprite
-            _sprite.GetComponent<Image>().sprite = Resources.Load<Sprite>( "Items/" + _item.id.ToString() );
-
-            RectTransform _rect = _sprite.GetComponent<RectTransform>();
-
-            //Position
-            _rect.anchoredPosition = new Vector3( _pos.x * SIZE_SLOT, -_pos.y * SIZE_SLOT, 0 );
-
-            //Size
-            _rect.SetSizeWithCurrentAnchors( RectTransform.Axis.Horizontal, SIZE_SLOT );
-            _rect.SetSizeWithCurrentAnchors( RectTransform.Axis.Vertical, SIZE_SLOT );
-        };
-        _OnRemovingItem += ( _inventory, _item, _pos ) => {
-            //RemoveItem( inventory, item, pos );
-            if( !inventoryPanelRef.ContainsKey( _inventory.name ) ) {
-                Debug.LogError( "Cannot remove an item sprite, because the inventory (" + _inventory.name + ") is not register." );
-                return;
-            }
-
-            //Remove the Sprite
-            Transform _curInv = inventoryPanelRef[ _inventory.name ].transform;
-            for( int _indexChild = _curInv.childCount - 1; _indexChild >= 0; --_indexChild ) {
-                Transform _curChild = _curInv.GetChild( _indexChild );
-                if( _curChild.name == _item.id.ToString() + "_" + _pos.x + "_" + _pos.y ) {
-                    Destroy( _curChild.gameObject );
-                    return;
-                }
-            }
-        };
-    }
-
-    public void RemoveInventoryPanel( GameObject _panel ) {
-        if( !inventoryPanelRef.ContainsKey( _panel.name ) ) return;
-
-        Destroy( inventoryPanelRef[ _panel.name ] );
-        inventoryPanelRef.Remove( _panel.name );
-    }
-
-    public GameObject CreatePanel( string _nameIdentifier, Inventory _inventory, bool _DisplayOnDebugLog = false) {
-        Inventory.InventorySpace _invSpace = _inventory.inventorySpace;
-        ItemRect[,] _virtualInv = _inventory.virtualInventory;
-
-        if( _DisplayOnDebugLog ) {
-            #region Display On Debug.Log
-            string _text = "Inventory : \n";
-            for( int _x = 0; _x < _invSpace.x; _x++ ) {
-                for( int _y = 0; _y < _invSpace.y; _y++ )
-                    if( _virtualInv[ _x, _y ] == null )
-                        _text += '▮';
-                    else
-                        _text += _virtualInv[ _x, _y ].uniqueId;
-                _text += '\n';
-            }
-            Debug.Log( _text );
-            #endregion
-        }
-
-        //The Panel which holding slots
-        GameObject _panel = Instantiate( panelPrefab, targetPanel.transform ) as GameObject;
-        _panel.name = _nameIdentifier;
-        _panel.transform.localRotation = Quaternion.identity;
-        _panel.GetComponent<RectTransform>().anchoredPosition = POS_DEFAULT_PANEL + offset;
-
-        //Update offset
-        offset.y -= SPACE_BETWEEN_PANEL + _invSpace.y * SIZE_SLOT;
-
-        //Update targetPanel height
-        targetPanel.GetComponent<RectTransform>().sizeDelta = new Vector2( 0, -offset.y - SPACE_BETWEEN_PANEL );
-
-        //Update Scrollbar
-        if( targetPanel.GetComponent<RectTransform>().rect.height > ACTIVE_SCROLLBAR_HEIGHT && targetPanel.activeInHierarchy) {
-            scrollBar.SetActive( true );
-        }
-        else {
-            scrollBar.SetActive( false );
-        }
-
-        //Slots        
-        for( int _x = 0; _x < _invSpace.x; ++_x ) {
-            for( int _y = 0; _y < _invSpace.y; ++_y ) {
-                //Create the current Slot
-                GameObject _slot = Instantiate( slotPrefab, _panel.transform ) as GameObject;
-                RectTransform _rectSlot = _slot.GetComponent<RectTransform>();
-
-                //Change her Position
-                _rectSlot.anchoredPosition = new Vector3( SIZE_SLOT * _x, -SIZE_SLOT * _y, 0 );
-
-                //Change Size
-                _rectSlot.SetSizeWithCurrentAnchors( RectTransform.Axis.Horizontal, SIZE_SLOT );
-                _rectSlot.SetSizeWithCurrentAnchors( RectTransform.Axis.Vertical, SIZE_SLOT );
-
-                //Update the name just to have a nice hierarchy
-                _slot.name = "Slot_" + _x + "_" + _y;
-            }
-        }
-
-        return _panel;
-    }
-    #endregion
-    */
-    #endregion
 
     #region InventoryControlerInstance
     public static InventoryControler instance;
@@ -157,10 +31,10 @@ public class InventoryControler : MonoBehaviour {
 
     #region Preset
     [Header( "Where the inventory will be display" )]
-    public GameObject targetPanel;
-
-    [Space( 5 )]
+    public Transform targetItemOnDragPanel;
+    public GameObject targetInventoryPanel;
     public GameObject scrollBar;
+
 
     [Space( 10 )]
     [Header( "Prefab used to build the inventory" )]
@@ -171,12 +45,12 @@ public class InventoryControler : MonoBehaviour {
     void Start() {
         if( panelPrefab == null || slotPrefab == null || itemPrefab == null )
             Debug.LogError( "Inventory Prefab not initialized" );
-        if( targetPanel == null )
+        if( targetInventoryPanel == null )
             Debug.LogError( "Panel holding the inventory system isn't referenced" );
         if( scrollBar == null )
             Debug.LogError( "Inventory system need a reference to a Scroll Bar" );
         //Get the current hide state
-        isHide = targetPanel.activeSelf;
+        isHide = targetInventoryPanel.activeSelf;
     }
     #endregion
 
@@ -186,10 +60,10 @@ public class InventoryControler : MonoBehaviour {
     public void HideInventory() {
         if( isHide )
             return;
-        targetPanel.SetActive( true );
+        targetInventoryPanel.SetActive( true );
         isHide = true;
 
-        if( targetPanel.GetComponent<RectTransform>().rect.height > ACTIVE_SCROLLBAR_HEIGHT && targetPanel.activeInHierarchy ) {
+        if( targetInventoryPanel.GetComponent<RectTransform>().rect.height > ACTIVE_SCROLLBAR_HEIGHT && targetInventoryPanel.activeInHierarchy ) {
             scrollBar.SetActive( true );
         } else {
             scrollBar.SetActive( false );
@@ -200,10 +74,10 @@ public class InventoryControler : MonoBehaviour {
     public void ShowInventory() {
         if( !isHide )
             return;
-        targetPanel.SetActive( false );
+        targetInventoryPanel.SetActive( false );
         isHide = false;
 
-        if( targetPanel.GetComponent<RectTransform>().rect.height > ACTIVE_SCROLLBAR_HEIGHT && targetPanel.activeInHierarchy ) {
+        if( targetInventoryPanel.GetComponent<RectTransform>().rect.height > ACTIVE_SCROLLBAR_HEIGHT && targetInventoryPanel.activeInHierarchy ) {
             scrollBar.SetActive( true );
             scrollBar.GetComponent<Scrollbar>().size = 1;
         } else {
@@ -221,13 +95,11 @@ public class InventoryControler : MonoBehaviour {
 
     #endregion
 
-    //Nouveaux attributs
-
     //      ( Cle : Valeur ) -> ( Inventaire : Panel ) 
-    Dictionary<Inventory, GameObject> InventoriesPanels = new Dictionary<Inventory, GameObject>();
+    private Dictionary<Inventory, GameObject> InventoriesPanels = new Dictionary<Inventory, GameObject>();
     private Vector2 offset = Vector3.zero;
 
-    //Nouvelle methodes :
+    #region Add or remove Item from inventory panel
     public void AddItemOnPanel( Inventory _inventory, ItemRect _itemRect ) {
         GameObject _panel;
 
@@ -254,27 +126,10 @@ public class InventoryControler : MonoBehaviour {
         //Size
         _rect.SetSizeWithCurrentAnchors( RectTransform.Axis.Horizontal, PANEL_SIZE * _itemRect.Width );
         _rect.SetSizeWithCurrentAnchors( RectTransform.Axis.Vertical, PANEL_SIZE * _itemRect.Height );
+        
+        //DragComponent
+        _sprite.AddComponent<DragAndDropUI>().Parameter( this, _itemRect );
 
-        //Create the button component
-        Button _button = _sprite.AddComponent<Button>();
-
-        //Transition
-        _button.transition = Selectable.Transition.None;
-
-        //Navigation
-        Navigation _modeNav = new Navigation();
-        _modeNav.mode = Navigation.Mode.None;
-        _button.navigation = _modeNav;
-
-        //Callback OnClick
-        _button.onClick.AddListener( () => {
-            SpriteOnClick( _sprite, _inventory, _itemRect );
-        } );
-    }
-
-    public void SpriteOnClick( GameObject _itemSprite, Inventory _inventory, ItemRect _itemRect ) {
-        Debug.Log( "Try to remove : " + _itemSprite.name );
-        _inventory.RemoveItem( _itemRect );
     }
 
     public void RemoveItemOnPanel( Inventory _inventory, ItemRect _itemRect ) {
@@ -296,15 +151,17 @@ public class InventoryControler : MonoBehaviour {
         }
 
     }
+    #endregion
 
+    #region CreatePanel
     public void CreatePanel( Inventory _inventory ) {
-        CreatePanel( _inventory, targetPanel );
+        CreatePanel( _inventory, targetInventoryPanel );
     }
 
     public void CreatePanel( Inventory _inventory, GameObject target) {
         //The Panel which holding slots
         GameObject _panel = Instantiate( panelPrefab, target.transform ) as GameObject;
-        _panel.name = targetPanel.name + targetPanel.transform.childCount.ToString();
+        _panel.name = targetInventoryPanel.name + targetInventoryPanel.transform.childCount.ToString();
         _panel.transform.localRotation = Quaternion.identity;
         _panel.GetComponent<RectTransform>().anchoredPosition = POS_DEFAULT_PANEL + offset;
 
@@ -334,4 +191,56 @@ public class InventoryControler : MonoBehaviour {
         _rectSlot.SetSizeWithCurrentAnchors( RectTransform.Axis.Horizontal, _inventory.Width * PANEL_SIZE );
         _rectSlot.SetSizeWithCurrentAnchors( RectTransform.Axis.Vertical, _inventory.Height * PANEL_SIZE );
     }
+    #endregion
+
+    #region OnDrag
+
+    private GameObject onDragSprite;
+    private ItemRect onDragItemRect;
+    private Inventory lastContainer;
+    private bool isCurDragging = false;
+
+    public void BeginDrag( GameObject _itemSprite, ItemRect _itemrect ) {
+        Debug.Log( "BeginDrag !" );
+        isCurDragging = true;
+        lastContainer = _itemrect.InventoryContainer;
+        _itemrect.InventoryContainer = null;
+
+        onDragItemRect = _itemrect;
+        onDragSprite = _itemSprite;
+
+        _itemSprite.SetActive( true );
+        _itemSprite.transform.SetParent( targetItemOnDragPanel );
+        _itemSprite.transform.localPosition = Input.mousePosition;
+    }
+
+    public void UpdateDrag () {
+        onDragSprite.transform.position = Input.mousePosition;// - new Vector2 (Input.);
+    }
+
+    public void EndDrag( ) {
+        Debug.Log( "EndDrag !" );
+        isCurDragging = false;
+        onDragItemRect.InventoryContainer = lastContainer;
+
+        onDragSprite.transform.SetParent( InventoriesPanels[ lastContainer ].transform );
+
+        onDragSprite.GetComponent<RectTransform>().anchoredPosition = new Vector3( onDragItemRect.X * PANEL_SIZE, -onDragItemRect.Y * PANEL_SIZE, 0 );
+    }
+
+    void Update () {
+        if (Input.GetKeyDown(KeyCode.O) && !isCurDragging) {
+            BeginDrag( GameObject.Find( "LOG_0_0" ), new ItemRect( 0, 0, 0, 0, new ItemData( ItemData.ItemID.LOG ) ) );
+        }
+
+        if (isCurDragging) {
+            UpdateDrag();
+
+            if (Input.GetMouseButtonUp(0)) {
+                EndDrag();
+            }
+        }
+    }
+
+    #endregion
 }

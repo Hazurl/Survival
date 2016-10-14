@@ -28,6 +28,8 @@ public class Character : MonoBehaviour {
     //Inventory
     [SerializeField]
     private Inventory inventory;
+    [SerializeField]
+    private Inventory secondInventory;
 
     [SerializeField]
     private string ressourceTag = "DroppedItem";
@@ -39,8 +41,8 @@ public class Character : MonoBehaviour {
         offset = camTf.position - tf.position;
 
         //Initialize inventory, later we should initialize from a save
-        //inventory = new Inventory( new Inventory.InventorySpace( INVENTORY_CAPACITY_X, INVENTORY_CAPACITY_Y ), "MyInventory", null, true );
-        inventory = new Inventory( 5, 5 );
+        inventory = new Inventory( INVENTORY_CAPACITY_X, INVENTORY_CAPACITY_Y );
+        secondInventory = new Inventory( 5, 8 );
     }
 
     void Update () {

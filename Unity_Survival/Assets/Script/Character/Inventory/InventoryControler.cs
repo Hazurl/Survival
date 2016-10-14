@@ -293,8 +293,6 @@ public class InventoryControler : MonoBehaviour {
         //Change Size
         _rectSlot.SetSizeWithCurrentAnchors( RectTransform.Axis.Horizontal, _inventory.Width * PANEL_SIZE );
         _rectSlot.SetSizeWithCurrentAnchors( RectTransform.Axis.Vertical, _inventory.Height * PANEL_SIZE );
-
-        //return _panel;
     }
 
 }

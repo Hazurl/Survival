@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
-using System;
 using UnityEngine.UI;
 
 [DisallowMultipleComponent]
@@ -257,14 +256,29 @@ public class InventoryControler : MonoBehaviour {
         _rect.SetSizeWithCurrentAnchors( RectTransform.Axis.Vertical, PANEL_SIZE * _itemRect.Height );
 
         //Create the button component
-        Button button = _sprite.AddComponent<Button>();
+        Button _button = _sprite.AddComponent<Button>();
 
-        button.onClick.AddListener( () => {
-            RemoveSpriteOnPanel( _sprite );
+        //Transition
+        _button.transition = Selectable.Transition.None;
+
+        //Navigation
+        Navigation _modeNav = new Navigation();
+        _modeNav.mode = Navigation.Mode.None;
+        _button.navigation = _modeNav;
+
+        //Callback OnClick
+        _button.onClick.AddListener( () => {
+            SpriteOnClick( _sprite, _inventory, _itemRect );
         } );
     }
 
+    public void SpriteOnClick( GameObject _itemSprite, Inventory _inventory, ItemRect _itemRect ) {
+        Debug.Log( "Try to remove : " + _itemSprite.name );
+        _inventory.RemoveItem( _itemRect );
+    }
+
     public void RemoveItemOnPanel( Inventory _inventory, ItemRect _itemRect ) {
+        Debug.Log( "Try to remove : " + _itemRect.ToString() + " from : " + _inventory.ToString());
         GameObject _panel;
 
         if( !InventoriesPanels.TryGetValue( _inventory, out _panel ) )
@@ -276,15 +290,11 @@ public class InventoryControler : MonoBehaviour {
             Transform child = _panel.transform.GetChild( index );
             if( child.name == _itemRect.data.Id.ToString() + "_" + _itemRect.X + "_" + _itemRect.Y ) {
                 //Remove it
-                Destroy( child );
+                Destroy( child.gameObject );
                 return;
             }
         }
 
-    }
-
-    public void RemoveSpriteOnPanel (GameObject _itemSprite) {
-        Debug.Log( "Try to remove : " + _itemSprite.name );
     }
 
     public void CreatePanel( Inventory _inventory ) {

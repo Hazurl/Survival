@@ -122,4 +122,13 @@ public class ItemRect
          || Y + Height <= other.Y
          );
     }
+
+    public bool CollideWithBorder( float _width, float _height ) {
+        return !(
+            X >= 0
+         && X + Width <= _width
+         && Y >= 0
+         && Y + Height <= _height
+         );
+    }
 }

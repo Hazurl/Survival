@@ -209,6 +209,11 @@ public class Inventory
     public bool AddItem( ItemRect _itemRect ) {
         //On test la collision avec ch  aque item de notre inventaire
         Debug.Log( "Add item" );
+
+        //If colliding with the inventory border
+        if( _itemRect.CollideWithBorder( Width, Height ) )
+            return false;
+
         foreach( ItemRect item in Items) {
             if( item.CollideWith( _itemRect ) )
                 return false;
@@ -223,6 +228,17 @@ public class Inventory
         InventoryControler.instance.AddItemOnPanel(this, _itemRect );
 
         return true;
+    }
+
+    public bool RemoveItem( ItemRect _itemRect ) {
+        //int index = Items.FindIndex( new Predicate<ItemRect>( i => { return i.X == _itemRect.X && i.Y == _itemRect.Y; } ) );
+
+        InventoryControler.instance.RemoveItemOnPanel( this, _itemRect );
+
+        Items.Remove( _itemRect );
+        _itemRect.InventoryContainer = null;
+
+        return false;
     }
 
 }

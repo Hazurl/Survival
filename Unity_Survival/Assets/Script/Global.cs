@@ -45,13 +45,14 @@ public class Global : MonoBehaviour {
             return;
 
         ItemData.ItemID _itemID;
-        int _id, _x, _y, _w, _h;
+        int _id;
+        float _x, _y, _w, _h;
         if( ( !int.TryParse( _cmds[ 1 ], out _id ) )
          || ( (_itemID = ItemData.ConvertIdToItem( _id ) ) == ItemData.ItemID.INVALID )
-         || ( !int.TryParse( _cmds[ 2 ], out _x ) )
-         || ( !int.TryParse( _cmds[ 3 ], out _y ) )
-         || ( !int.TryParse( _cmds[ 4 ], out _w ) )
-         || ( !int.TryParse( _cmds[ 5 ], out _h ) ) )
+         || ( !float.TryParse( _cmds[ 2 ], out _x ) )
+         || ( !float.TryParse( _cmds[ 3 ], out _y ) )
+         || ( !float.TryParse( _cmds[ 4 ], out _w ) )
+         || ( !float.TryParse( _cmds[ 5 ], out _h ) ) )
             return;
 
         LastCmd = _cmd;

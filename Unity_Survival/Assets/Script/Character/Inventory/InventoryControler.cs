@@ -255,6 +255,36 @@ public class InventoryControler : MonoBehaviour {
         //Size
         _rect.SetSizeWithCurrentAnchors( RectTransform.Axis.Horizontal, PANEL_SIZE * _itemRect.Width );
         _rect.SetSizeWithCurrentAnchors( RectTransform.Axis.Vertical, PANEL_SIZE * _itemRect.Height );
+
+        //Create the button component
+        Button button = _sprite.AddComponent<Button>();
+
+        button.onClick.AddListener( () => {
+            RemoveSpriteOnPanel( _sprite );
+        } );
+    }
+
+    public void RemoveItemOnPanel( Inventory _inventory, ItemRect _itemRect ) {
+        GameObject _panel;
+
+        if( !InventoriesPanels.TryGetValue( _inventory, out _panel ) )
+            return;
+
+        //TODO : for optimization hold in memory a list for each panel or inventory the list of the Item's sprite
+
+        for (int index = _panel.transform.childCount - 1; index >= 0 ; --index ) {
+            Transform child = _panel.transform.GetChild( index );
+            if( child.name == _itemRect.data.Id.ToString() + "_" + _itemRect.X + "_" + _itemRect.Y ) {
+                //Remove it
+                Destroy( child );
+                return;
+            }
+        }
+
+    }
+
+    public void RemoveSpriteOnPanel (GameObject _itemSprite) {
+        Debug.Log( "Try to remove : " + _itemSprite.name );
     }
 
     public void CreatePanel( Inventory _inventory ) {
@@ -294,5 +324,4 @@ public class InventoryControler : MonoBehaviour {
         _rectSlot.SetSizeWithCurrentAnchors( RectTransform.Axis.Horizontal, _inventory.Width * PANEL_SIZE );
         _rectSlot.SetSizeWithCurrentAnchors( RectTransform.Axis.Vertical, _inventory.Height * PANEL_SIZE );
     }
-
 }

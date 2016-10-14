@@ -9,4 +9,8 @@ public class DroppedItem : MonoBehaviour {
     public ItemData TakeItem () {
         return itemData;
     }
+
+    public void OnMouseDown () {
+        Debug.Log( "We click on this dropped item !" );
+    }
 }

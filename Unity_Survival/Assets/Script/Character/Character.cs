@@ -29,6 +29,9 @@ public class Character : MonoBehaviour {
     [SerializeField]
     private Inventory inventory;
 
+    [SerializeField]
+    private string ressourceTag = "DroppedItem";
+
     void Start () {
         //Initialize Tansform
         tf = GetComponent<Transform>();
@@ -155,5 +158,11 @@ public class Character : MonoBehaviour {
 
     public void giveItem ( ItemRect _itemRect ) {
         inventory.AddItem( _itemRect );
+    }
+
+    public void OnTriggerEnter (Collider other) {
+        if (other.tag == ressourceTag) {
+            Debug.Log("TriggerEnter with : " + other.GetComponent<DroppedItem>().TakeItem().Id.ToString());
+        }
     }
 }

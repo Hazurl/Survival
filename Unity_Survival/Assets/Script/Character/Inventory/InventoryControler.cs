@@ -216,6 +216,8 @@ public class InventoryControler : MonoBehaviour {
     private GameObject onDragSprite;
     private ItemRect onDragItemRect;
     private Inventory lastContainer;
+    private Vector2 lastRectPos;
+
 
     private Vector2 dragOffset = Vector2.zero;
 
@@ -227,13 +229,12 @@ public class InventoryControler : MonoBehaviour {
         onDragItemRect = _itemrect;
         onDragSprite = _itemSprite;
         _itemSprite.transform.SetParent( targetItemOnDragPanel );
+        lastRectPos = onDragItemRect.rect.position;
+
+        _itemrect.InventoryContainer.RemoveItem( _itemrect );
 
         lastContainer = _itemrect.InventoryContainer;
         _itemrect.InventoryContainer = null;
-        /*
-         _itemSprite.SetActive( true );
-         _itemSprite.transform.SetParent( targetItemOnDragPanel );
-         _itemSprite.transform.localPosition = Input.mousePosition;*/
     }
 
     public void UpdateDrag ( PointerEventData e  ) {
@@ -260,17 +261,27 @@ public class InventoryControler : MonoBehaviour {
         }
 
         if( _targetPanel != null ) {
-            Vector3 _offsetPos = onDragSprite.transform.position - _targetPanel.transform.position;
+            Vector3 tmp = _targetPanel.transform.position - new Vector3( _targetPanel.GetComponent<RectTransform>().rect.width/2, 0, 0 );
+            Vector3 _offsetPos = onDragSprite.transform.position - tmp;
             _offsetPos /= PANEL_SIZE;
-            Debug.Log( "_offsetPos : " + _offsetPos );
-
+            _offsetPos.y *= -1;
+            Vector2 _lastRectPos = onDragItemRect.rect.position;
+            onDragItemRect.rect.position = _offsetPos;
+            if (_targetInv.AddItem( onDragItemRect )) {
+                onDragItemRect.InventoryContainer = _targetInv;
+            }
+            else {
+                onDragItemRect.InventoryContainer = lastContainer;
+                onDragItemRect.rect.position = _lastRectPos;
+                lastContainer.AddItem( onDragItemRect );
+            }
+            return;
         }
-        /*onDragItemRect.InventoryContainer = lastContainer;
 
-        onDragSprite.transform.SetParent( InventoriesPanels[ lastContainer ].transform );
+        onDragItemRect.InventoryContainer = lastContainer;
+        Debug.LogError( lastContainer == null );
+        lastContainer.AddItem( onDragItemRect );
 
-        onDragSprite.GetComponent<RectTransform>().anchoredPosition = new Vector3( onDragItemRect.X * PANEL_SIZE, -onDragItemRect.Y * PANEL_SIZE, 0 );
-        */
     }
 
     #endregion

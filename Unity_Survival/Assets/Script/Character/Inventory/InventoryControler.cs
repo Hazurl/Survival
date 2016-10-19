@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.UI;
+using System;
+using System.Linq;
 
 [DisallowMultipleComponent]
 public class InventoryControler : MonoBehaviour {
@@ -52,6 +54,7 @@ public class InventoryControler : MonoBehaviour {
         //Get the current hide state
         isHide = targetInventoryPanel.activeSelf;
     }
+
     #endregion
 
     #region Toggle Hide
@@ -128,7 +131,7 @@ public class InventoryControler : MonoBehaviour {
         _rect.SetSizeWithCurrentAnchors( RectTransform.Axis.Vertical, PANEL_SIZE * _itemRect.Height );
         
         //DragComponent
-        _sprite.AddComponent<DragAndDropUI>().Parameter( this, _itemRect );
+        _sprite.AddComponent<DragAndDropUI>().Parameter( this, _itemRect, targetItemOnDragPanel );
 
     }
 
@@ -151,6 +154,22 @@ public class InventoryControler : MonoBehaviour {
         }
 
     }
+
+    public bool TryDropItemOn( GameObject _target, DragAndDropUI _itemToDrop ) {
+        Inventory _inv = InventoriesPanels.FirstOrDefault( x => x.Value == _target ).Key;
+
+        if( _inv == null )
+            return false;
+
+        Vector3 _offset = _target.transform.position - _itemToDrop.transform.position;
+
+        if (_inv.AddItem(_itemToDrop.itemRect)) {
+            return true;
+        }
+
+        return false;
+    }
+
     #endregion
 
     #region CreatePanel
@@ -194,7 +213,7 @@ public class InventoryControler : MonoBehaviour {
     #endregion
 
     #region OnDrag
-
+    /*
     private GameObject onDragSprite;
     private ItemRect onDragItemRect;
     private Inventory lastContainer;
@@ -240,7 +259,7 @@ public class InventoryControler : MonoBehaviour {
                 EndDrag();
             }
         }
-    }
+    }*/
 
     #endregion
 }

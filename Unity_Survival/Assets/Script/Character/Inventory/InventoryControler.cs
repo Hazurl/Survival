@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.UI;
-using System;
+using UnityEngine.EventSystems;
 using System.Linq;
 
 [DisallowMultipleComponent]
@@ -131,7 +131,7 @@ public class InventoryControler : MonoBehaviour {
         _rect.SetSizeWithCurrentAnchors( RectTransform.Axis.Vertical, PANEL_SIZE * _itemRect.Height );
         
         //DragComponent
-        _sprite.AddComponent<DragAndDropUI>().Parameter( this, _itemRect, targetItemOnDragPanel );
+        _sprite.AddComponent<DragAndDropUI>().Parameter( this, _itemRect );
 
     }
 
@@ -161,9 +161,8 @@ public class InventoryControler : MonoBehaviour {
         if( _inv == null )
             return false;
 
-        Vector3 _offset = _target.transform.position - _itemToDrop.transform.position;
-
-        if (_inv.AddItem(_itemToDrop.itemRect)) {
+        Debug.Log( "Try to drop at " + _itemToDrop.itemRect.rect.position );
+        if( _inv.AddItem(_itemToDrop.itemRect)) {
             return true;
         }
 
@@ -213,15 +212,15 @@ public class InventoryControler : MonoBehaviour {
     #endregion
 
     #region OnDrag
-    /*
+    
     private GameObject onDragSprite;
     private ItemRect onDragItemRect;
     private Inventory lastContainer;
-    private bool isCurDragging = false;
 
-    public void BeginDrag( GameObject _itemSprite, ItemRect _itemrect ) {
+    private Vector2 dragOffset = Vector2.zero;
+
+    public void BeginDrag( GameObject _itemSprite, ItemRect _itemrect, PointerEventData e ) {
         Debug.Log( "BeginDrag !" );
-        isCurDragging = true;
         lastContainer = _itemrect.InventoryContainer;
         _itemrect.InventoryContainer = null;
 
@@ -231,15 +230,15 @@ public class InventoryControler : MonoBehaviour {
         _itemSprite.SetActive( true );
         _itemSprite.transform.SetParent( targetItemOnDragPanel );
         _itemSprite.transform.localPosition = Input.mousePosition;
+        dragOffset = (Vector2)transform.position - e.position;
     }
 
-    public void UpdateDrag () {
-        onDragSprite.transform.position = Input.mousePosition;// - new Vector2 (Input.);
+    public void UpdateDrag ( PointerEventData e  ) {
+        onDragSprite.transform.position = e.position + dragOffset;
     }
 
-    public void EndDrag( ) {
+    public void EndDrag( PointerEventData e ) {
         Debug.Log( "EndDrag !" );
-        isCurDragging = false;
         onDragItemRect.InventoryContainer = lastContainer;
 
         onDragSprite.transform.SetParent( InventoriesPanels[ lastContainer ].transform );
@@ -247,7 +246,7 @@ public class InventoryControler : MonoBehaviour {
         onDragSprite.GetComponent<RectTransform>().anchoredPosition = new Vector3( onDragItemRect.X * PANEL_SIZE, -onDragItemRect.Y * PANEL_SIZE, 0 );
     }
 
-    void Update () {
+    /*void Update () {
         if (Input.GetKeyDown(KeyCode.O) && !isCurDragging) {
             BeginDrag( GameObject.Find( "LOG_0_0" ), new ItemRect( 0, 0, 0, 0, new ItemData( ItemData.ItemID.LOG ) ) );
         }

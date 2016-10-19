@@ -37,17 +37,17 @@ public class Inventory
 
     public bool AddItem( ItemRect _itemRect ) {
         //On test la collision avec ch  aque item de notre inventaire
-        Debug.Log( "Add item" );
+        //Debug.Log( "Add item" );
 
         //If colliding with the inventory border
         if( _itemRect.CollideWithBorder( Width, Height ) )
             return false;
-
+        
         foreach( ItemRect item in Items) {
             if( item.CollideWith( _itemRect ) )
                 return false;
         }
-        Debug.Log( "Not colliding" );
+        //Debug.Log( "Not colliding" );
 
         //On ajoute l'item
         Items.Add( _itemRect );

@@ -179,7 +179,7 @@ public class InventoryControler : MonoBehaviour {
     public void CreatePanel( Inventory _inventory, GameObject target) {
         //The Panel which holding slots
         GameObject _panel = Instantiate( panelPrefab, target.transform ) as GameObject;
-        _panel.name = targetInventoryPanel.name + targetInventoryPanel.transform.childCount.ToString();
+        _panel.name = targetInventoryPanel.name + '_' + targetInventoryPanel.transform.childCount.ToString();
         _panel.transform.localRotation = Quaternion.identity;
         _panel.GetComponent<RectTransform>().anchoredPosition = POS_DEFAULT_PANEL + offset;
 
@@ -221,16 +221,19 @@ public class InventoryControler : MonoBehaviour {
 
     public void BeginDrag( GameObject _itemSprite, ItemRect _itemrect, PointerEventData e ) {
         Debug.Log( "BeginDrag !" );
-        lastContainer = _itemrect.InventoryContainer;
-        _itemrect.InventoryContainer = null;
+
+        dragOffset = (Vector2)_itemSprite.transform.position - e.position;
 
         onDragItemRect = _itemrect;
         onDragSprite = _itemSprite;
-
-        _itemSprite.SetActive( true );
         _itemSprite.transform.SetParent( targetItemOnDragPanel );
-        _itemSprite.transform.localPosition = Input.mousePosition;
-        dragOffset = (Vector2)transform.position - e.position;
+
+        lastContainer = _itemrect.InventoryContainer;
+        _itemrect.InventoryContainer = null;
+        /*
+         _itemSprite.SetActive( true );
+         _itemSprite.transform.SetParent( targetItemOnDragPanel );
+         _itemSprite.transform.localPosition = Input.mousePosition;*/
     }
 
     public void UpdateDrag ( PointerEventData e  ) {
@@ -239,26 +242,36 @@ public class InventoryControler : MonoBehaviour {
 
     public void EndDrag( PointerEventData e ) {
         Debug.Log( "EndDrag !" );
-        onDragItemRect.InventoryContainer = lastContainer;
+
+        GameObject _targetPanel = null;
+        Inventory _targetInv = null;
+
+        List<RaycastResult> _outputRaycast = new List<RaycastResult>();
+        EventSystem.current.RaycastAll( e, _outputRaycast );
+
+        foreach( RaycastResult _ray in _outputRaycast ) {
+            GameObject curPanel = _ray.gameObject;
+            Inventory _inv = InventoriesPanels.FirstOrDefault( x => x.Value == curPanel ).Key;
+            if( _inv != null ) {
+                _targetInv = _inv;
+                _targetPanel = curPanel;
+                break;
+            }
+        }
+
+        if( _targetPanel != null ) {
+            Vector3 _offsetPos = onDragSprite.transform.position - _targetPanel.transform.position;
+            _offsetPos /= PANEL_SIZE;
+            Debug.Log( "_offsetPos : " + _offsetPos );
+
+        }
+        /*onDragItemRect.InventoryContainer = lastContainer;
 
         onDragSprite.transform.SetParent( InventoriesPanels[ lastContainer ].transform );
 
         onDragSprite.GetComponent<RectTransform>().anchoredPosition = new Vector3( onDragItemRect.X * PANEL_SIZE, -onDragItemRect.Y * PANEL_SIZE, 0 );
+        */
     }
-
-    /*void Update () {
-        if (Input.GetKeyDown(KeyCode.O) && !isCurDragging) {
-            BeginDrag( GameObject.Find( "LOG_0_0" ), new ItemRect( 0, 0, 0, 0, new ItemData( ItemData.ItemID.LOG ) ) );
-        }
-
-        if (isCurDragging) {
-            UpdateDrag();
-
-            if (Input.GetMouseButtonUp(0)) {
-                EndDrag();
-            }
-        }
-    }*/
 
     #endregion
 }

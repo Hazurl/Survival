@@ -24,13 +24,7 @@ public class DragAndDropUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
         if( !wasParametered )
             return;
 
-
         controler.BeginDrag( this.gameObject, itemRect, eventData );
-        /*
-        lastPosition = transform.position;
-        lastPositionRect = itemRect.rect.position;
-
-        offset = transform.position - (Vector3)eventData.position;*/
     }
 
     public void OnDrag( PointerEventData eventData ) {
@@ -38,8 +32,6 @@ public class DragAndDropUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
             return;
 
         controler.UpdateDrag(eventData );
-        /*
-        transform.position = (Vector3)eventData.position + offset;*/
     }
 
     public void OnEndDrag( PointerEventData eventData ) {
